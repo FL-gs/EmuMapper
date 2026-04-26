@@ -30,3 +30,10 @@ kotlin_dump.txt
 
 # Gradle local cache
 .gradle-local/
+
+# Release / signing / generated packages
+*.apk
+*.aab
+*.jks
+*.keystore
+app/debug/
