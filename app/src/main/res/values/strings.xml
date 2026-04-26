@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">PairingApp</string>
+    <string name="none">None</string>
+    <string name="cancel">Cancel</string>
+    <string name="accept">Accept</string>
+    <string name="next">Next</string>
+
+    <string name="internal_controllers_explanation">
+Select your console’s internal controller profiles so they can be distinguished from external ones.
+
+Turn off any external controllers before setup.
+You don’t need to configure both profiles and you can modify this later in the app settings.
+</string>
+
+    <string name="internal_controllers_title">Built-In Controllers</string>
+    <string name="internal_controller_1">Internal controller 1</string>
+    <string name="internal_controller_2">Internal controller 2</string>
+    <string name="no_controllers_detected">No controllers detected</string>
+    <string name="onboarding_choose_next_hint">A: Select | START: Next</string>
+
+    <string name="settings_sidebar_title">Settings</string>
+    <string name="settings_category_App">App Settings</string>
+    <string name="settings_category_language">Language</string>
+    <string name="settings_category_emulators">Emulators</string>
+    <string name="settings_category_controllers">Controllers</string>
+    <string name="settings_category_write_mode">Writing Mode</string>
+    <string name="hint_navigate">Navigate</string>
+    <string name="hint_choose">Choose</string>
+    <string name="hint_enter">Ok</string>
+    <string name="hint_back">Back</string>
+    <string name="hint_activate">Activate</string>
+    <string name="hint_deactivate">Deactivate</string>
+    <string name="hint_exit">Exit</string>
+    <string name="write_failed">Write failed: %1$s</string>
+    <string name="write_failed_multiple">Write failed: %1$s +%2$d</string>
+    <string name="retroarch_dialog_title">Configure RetroArch</string>
+    <string name="retroarch_dialog_message">To work without root, the app will move RetroArch\'s autoconfig directory.</string>
+
+    <string name="theme">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_subtitle">Change the theme of the app</string>
+    <string name="language_subtitle">Change the language of the app</string>
+    <string name="write_mode_subtitle">Choose how emulator settings are updated</string>
+    <string name="controllers_title">Built-In Controllers</string>
+    <string name="controllers_subtitle">Helps the app recognize built-in controllers</string>
+    <string name="no_emulators_detected">No emulators detected</string>
+    <string name="clean_logs">Clean Logs</string>
+    <string name="logs_cleared">Logs cleared !</string>
+
+    <string name="controllers_saved">Configs saved</string>
+    <string name="hold">Hold</string>
+    <string name="to_write">to write</string>
+    <string name="hint_settings">Settings</string>
+    <string name="hint_hold_to_write">Hold to write</string>
+
+    <string name="connect_controllers_hint">Connect controllers\nto detect them automatically</string>
+    <string name="player_format">Player %1$d</string>
+    <string name="swap_ab">Swap AB</string>
+
+    <string name="language_system">System</string>
+    <string name="language_english">English</string>
+    <string name="language_french">French</string>
+
+    <string name="write_mode_manual">Manual</string>
+    <string name="write_mode_automatic">Automatic</string>
+    <string name="write_mode_title">Writing Mode</string>
+    <string name="write_mode_desc_manual">Manual : Only when you hold START on the pairing screen.</string>
+    <string name="write_mode_desc_auto">Automatic: Whenever the detected controller layout changes.</string>
+    <string name="holdStartToWriteLabel">Hold START to write</string>
+    <string name="settings_category_debug">Debug</string>
+    <string name="debug_logs_title">Advanced logs</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
+    <string name="write_logs_to_file">Write logs to file</string>
+    <string name="write_logs_to_file_desc">Useful for troubleshooting and bug reports</string>
+    <string name="auto_pairing_service_channel_name">Automatic pairing</string>
+    <string name="auto_pairing_service_title">Automatic pairing active</string>
+    <string name="auto_pairing_service_text">Controller detection and auto-write stay active in background.</string>
+</resources>

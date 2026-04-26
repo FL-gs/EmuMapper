@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">PairingApp</string>
+    <string name="none">Aucun</string>
+    <string name="cancel">Annuler</string>
+    <string name="accept">Accepter</string>
+    <string name="next">Suivant</string>
+
+    <string name="internal_controllers_explanation">
+Sélectionnez les profils des manettes internes de votre console afin de les distinguer des manettes externes.
+
+Éteignez les manettes externes avant la configuration.
+Vous n’avez pas besoin de configurer les deux profils et vous pourrez modifier cela plus tard dans les paramètres de l’application.
+</string>
+
+    <string name="internal_controllers_title">Manettes intégrées</string>
+    <string name="internal_controller_1">Manette interne 1</string>
+    <string name="internal_controller_2">Manette interne 2</string>
+    <string name="no_controllers_detected">Aucune manette détectée</string>
+    <string name="onboarding_choose_next_hint">A : Sélectionner | START : Suivant</string>
+
+    <string name="settings_sidebar_title">Paramètres</string>
+    <string name="settings_category_App">Paramètres de l’application</string>
+    <string name="settings_category_language">Langue</string>
+    <string name="settings_category_emulators">Émulateurs</string>
+    <string name="settings_category_controllers">Manettes</string>
+    <string name="settings_category_write_mode">Mode d’écriture</string>
+    <string name="hint_navigate">Naviguer</string>
+    <string name="hint_choose">Choisir</string>
+    <string name="hint_enter">OK</string>
+    <string name="hint_back">Retour</string>
+    <string name="hint_activate">Activer</string>
+    <string name="hint_deactivate">Désactiver</string>
+    <string name="hint_exit">Quitter</string>
+    <string name="write_failed">Échec de l’écriture : %1$s</string>
+    <string name="write_failed_multiple">Échec de l’écriture : %1$s +%2$d</string>
+    <string name="retroarch_dialog_title">Configurer RetroArch</string>
+    <string name="retroarch_dialog_message">Pour fonctionner sans root, l’application déplacera le dossier autoconfig de RetroArch.</string>
+
+    <string name="theme">Thème</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="theme_subtitle">Changer le thème de l’application</string>
+    <string name="language_subtitle">Changer la langue de l’application</string>
+    <string name="write_mode_subtitle">Choisir comment les paramètres des émulateurs sont mis à jour</string>
+    <string name="controllers_title">Manettes intégrées</string>
+    <string name="controllers_subtitle">Aide l’application à reconnaître les manettes intégrées</string>
+    <string name="no_emulators_detected">Aucun émulateur détecté</string>
+    <string name="clean_logs">Effacer les logs</string>
+    <string name="logs_cleared">Logs effacés !</string>
+
+    <string name="controllers_saved">Configurations enregistrées</string>
+    <string name="hold">Maintenir</string>
+    <string name="to_write">pour écrire</string>
+    <string name="hint_settings">Paramètres</string>
+    <string name="hint_hold_to_write">Maintenir pour écrire</string>
+
+    <string name="connect_controllers_hint">Connectez des manettes\npour les détecter automatiquement</string>
+    <string name="player_format">Joueur %1$d</string>
+    <string name="swap_ab">Inverser A/B</string>
+
+    <string name="language_system">Système</string>
+    <string name="language_english">Anglais</string>
+    <string name="language_french">Français</string>
+
+    <string name="write_mode_manual">Manuel</string>
+    <string name="write_mode_automatic">Automatique</string>
+    <string name="write_mode_title">Mode d’écriture</string>
+    <string name="write_mode_desc_manual">Manuel : uniquement lorsque vous maintenez START sur l’écran d’association.</string>
+    <string name="write_mode_desc_auto">Automatique : chaque fois que la disposition des manettes détectées change.</string>
+    <string name="holdStartToWriteLabel">Maintenir START pour écrire</string>
+    <string name="settings_category_debug">Débogage</string>
+    <string name="debug_logs_title">Logs avancés</string>
+    <string name="enabled">Activé</string>
+    <string name="disabled">Désactivé</string>
+    <string name="write_logs_to_file">Écrire les logs dans un fichier</string>
+    <string name="write_logs_to_file_desc">Utile pour le dépannage et les rapports de bug</string>
+    <string name="auto_pairing_service_channel_name">Association automatique</string>
+    <string name="auto_pairing_service_title">Association automatique active</string>
+    <string name="auto_pairing_service_text">La détection des manettes et l’écriture automatique restent actives en arrière-plan.</string>
+</resources>
