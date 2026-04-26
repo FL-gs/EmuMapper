@@ -3,6 +3,7 @@
 PairingApp is an Android app designed for Android handheld gaming devices such as Retroid or AYN consoles.
 
 It automatically manages controller assignments for emulators, enabling a seamless handheld ↔ docked experience.
+The app is designed for controller-based navigation and does not support touchscreen input.
 <p align="center">
 
   <img src="./assets/main.gif" width="800"/>
@@ -12,7 +13,11 @@ It automatically manages controller assignments for emulators, enabling a seamle
 
 PairingApp detects connected controllers and writes the correct configuration into supported emulator config files.
 
-On launch, it performs an initial scan to detect connected controllers and installed emulators, then automatically triggers a new scan whenever a controller state changes (connection, disconnection, or order change).
+PairingApp scans connected controllers when the app starts and whenever the controller state changes.
+
+Installed emulators are detected automatically and can be enabled from Settings.
+
+> ℹ️ After the first setup, go to Settings and enable the emulators you want PairingApp to manage.
 
 Controllers are assigned to player slots based on their connection order.
 
@@ -38,7 +43,7 @@ If you want me to test other standalone emulators, feel free to contact me. This
 | AetherSX2   | ❌     | Requires root access to config files                                                 |
 | NetherSX2   | ❌     | Requires root access to config files                                                 |
 
-> ⚠️For RetroArch, PairingApp uses the priority option to match player order with controller connection order. However, this feature is currently bugged.
+> ℹ️ For RetroArch, PairingApp uses the priority option to match player order with controller connection order. However, this feature is currently bugged.
 > Until it is fixed on RetroArch, you can disable config writing for RetroArch and rely on its built-in auto configuration.
 
 
@@ -72,7 +77,7 @@ You can change the built-in controller profile later in Settings.
 
 Manual mode gives full control to the user.
 
-You open the app and press **Start** when you want to write the controller configuration.
+You open the app and press **Start** (Player 1 only) when you want to write the controller configuration.
 
 This mode is recommended if you do not want the app running in the background.
 

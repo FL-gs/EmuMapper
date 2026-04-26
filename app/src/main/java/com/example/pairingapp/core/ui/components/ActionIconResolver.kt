@@ -10,15 +10,23 @@ object ActionIconResolver {
         style: ControllerHintStyle
     ): Int = when (style) {
 
-        ControllerHintStyle.AYN_ODIN_2_PORTAL -> when (action) {
+        ControllerHintStyle.AYN_ODIN_2_PORTAL,
+        ControllerHintStyle.AYN_ODIN_3 -> when (action) {
             GamepadAction.SELECT -> R.drawable.ic_select_odin
             GamepadAction.START -> R.drawable.ic_start_odin
             else -> iconRes(action, ControllerHintStyle.GENERIC)
         }
 
-        ControllerHintStyle.EIGHT_BITDO -> when (action) {
+        ControllerHintStyle.WIRELESS_ULTIMATE_2C,
+        ControllerHintStyle.WIRELESS_ULTIMATE_2 -> when (action) {
             GamepadAction.SELECT -> R.drawable.ic_select_8bitdo
             GamepadAction.START -> R.drawable.ic_start_8bitdo
+            else -> iconRes(action, ControllerHintStyle.GENERIC)
+        }
+
+        ControllerHintStyle.SN30_PRO  -> when (action) {
+            GamepadAction.SELECT -> R.drawable.ic_select
+            GamepadAction.START -> R.drawable.ic_start
             else -> iconRes(action, ControllerHintStyle.GENERIC)
         }
 

@@ -53,9 +53,14 @@ object ControllerDisplay {
                     n.contains("wireless controller") ->
                 ControllerHintStyle.PLAYSTATION
 
-            n.contains("8bitdo") ->
-                ControllerHintStyle.EIGHT_BITDO
+            n.contains("8bitdo ultimate 2c") ->
+                ControllerHintStyle.WIRELESS_ULTIMATE_2C
 
+            n.contains("8bitdo ultimate 2") ->
+                ControllerHintStyle.WIRELESS_ULTIMATE_2
+
+            n.contains("88bitdo sn30 pro") ->
+                ControllerHintStyle.SN30_PRO
             else ->
                 ControllerHintStyle.GENERIC
         }
@@ -69,9 +74,18 @@ object ControllerDisplay {
             manufacturer.contains("ayn") && model.contains("odin2 portal") ->
                 ControllerHintStyle.AYN_ODIN_2_PORTAL
 
+            manufacturer.contains("ayn") && (
+                    model.contains("odin3") || model.contains("odin 3")
+                    ) ->
+                ControllerHintStyle.AYN_ODIN_3
+
             manufacturer.contains("retroid") &&
                     (model.contains("rp5") || model.contains("pocket 5")) ->
                 ControllerHintStyle.RETROID_POCKET_5
+
+            manufacturer.contains("retroid") &&
+                    (model.contains("rp5") || model.contains("pocket 5")) ->
+                ControllerHintStyle.RETROID_POCKET_6
 
             else ->
                 ControllerHintStyle.GENERIC
@@ -84,6 +98,8 @@ object ControllerDisplay {
             n.contains("8bitdo ultimate 2c") -> R.drawable.controller_8bitdo_ultimate_2c
             n.contains("8bitdo ultimate") -> R.drawable.controller_8bitdo_ultimate
             n.contains("8bitdo ngc") -> R.drawable.controller_8bitdo_ngc_modkit
+            n.contains("8bitdo sn30 pro") -> R.drawable.controller_8bitdo_sn30_pro
+            n.contains("nyxi warrior") -> R.drawable.controller_nyxi_warrior
             n.contains("dualsense") || n.contains("wireless controller") -> R.drawable.controller_dualsense
             n.contains("xbox") -> R.drawable.controller_xbox
             else -> R.drawable.generic_controller
@@ -126,11 +142,20 @@ object ControllerDisplay {
             manufacturer.contains("ayn") && model.contains("odin2 portal") ->
                 "AYN Odin 2 Portal"
 
+            manufacturer.contains("ayn") && (
+                    model.contains("odin3") || model.contains("odin 3")
+                    ) ->
+                        "AYN Odin 3"
+
             manufacturer.contains("retroid") && (
                     model.contains("rp5") || model.contains("pocket 5")
                     ) ->
-                "Retroid Pocket 5"
+                        "Retroid Pocket 5"
 
+            manufacturer.contains("retroid") && (
+                    model.contains("rp6") || model.contains("pocket 6")
+                    ) ->
+                        "Retroid Pocket 6"
 
 
             else ->
