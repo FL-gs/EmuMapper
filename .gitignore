@@ -27,3 +27,6 @@ app/google-services.json
 captures/
 dump_kotlin.py
 kotlin_dump.txt
+
+# Gradle local cache
+.gradle-local/
