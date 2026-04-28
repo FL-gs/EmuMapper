@@ -100,7 +100,7 @@ object ControllerDisplay {
             n.contains("8bitdo ngc") -> R.drawable.controller_8bitdo_ngc_modkit
             n.contains("8bitdo sn30 pro") -> R.drawable.controller_8bitdo_sn30_pro
             n.contains("nyxi warrior") -> R.drawable.controller_nyxi_warrior
-            n.contains("dualsense") || n.contains("wireless controller") -> R.drawable.controller_dualsense
+            n.contains("dualsense") -> R.drawable.controller_dualsense
             n.contains("xbox") -> R.drawable.controller_xbox
             else -> R.drawable.generic_controller
         }
