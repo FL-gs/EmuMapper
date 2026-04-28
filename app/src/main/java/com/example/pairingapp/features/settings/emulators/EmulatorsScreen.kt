@@ -1,13 +1,8 @@
 ﻿package com.example.pairingapp.features.settings.emulators
 
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -20,24 +15,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.example.pairingapp.R
 import com.example.pairingapp.core.input.PadKey
 import com.example.pairingapp.core.input.mapKeyEvent
-import com.example.pairingapp.core.ui.components.CustomSwitch
 import com.example.pairingapp.core.ui.components.HintBarState
 import com.example.pairingapp.data.emulators.EmulatorDef
 import com.example.pairingapp.data.emulators.EmulatorDetector
+import com.example.pairingapp.features.emulators.components.EmulatorToggleList
 
 @Composable
 fun EmulatorsScreen(
@@ -156,63 +147,12 @@ fun EmulatorsScreen(
             .graphicsLayer { alpha = previewAlpha },
         contentAlignment = Alignment.Center
     ) {
-        if (installed.isEmpty()) {
-            Text(
-                text = stringResource(R.string.no_emulators_detected),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        } else {
-            Column(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                installed.forEachIndexed { index, emulator ->
-                    EmulatorRow(
-                        emulator = emulator,
-                        enabled = enabledPackages.contains(emulator.id),
-                        focused = active && index == focusIndex
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun EmulatorRow(
-    emulator: EmulatorDef,
-    enabled: Boolean,
-    focused: Boolean
-) {
-    val textColor = if (focused) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.onSurface
-    }
-
-    val checkedTrackColor = MaterialTheme.colorScheme.primary
-    val uncheckedTrackColor = MaterialTheme.colorScheme.outline
-    val thumbColor = Color.White
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-        CustomSwitch(
-            checked = enabled,
-            onCheckedChange = {},
-            checkedTrackColor = checkedTrackColor,
-            uncheckedTrackColor = uncheckedTrackColor,
-            thumbColor = thumbColor,
-            enabled = false,
-            focused = focused
-        )
-
-        Text(
-            text = emulator.label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = textColor
+        EmulatorToggleList(
+            installed = installed,
+            enabledEmulators = enabledPackages,
+            focusedIndex = if (active) focusIndex else -1,
         )
     }
 }
+
+

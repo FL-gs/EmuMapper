@@ -5,17 +5,19 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -34,13 +36,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pairingapp.R
 import com.example.pairingapp.core.input.PadKey
 import com.example.pairingapp.core.input.mapKeyEvent
 import com.example.pairingapp.core.ui.components.ActionButton
-import com.example.pairingapp.core.ui.components.CustomSwitch
 import com.example.pairingapp.data.emulators.EmulatorDef
 import com.example.pairingapp.data.emulators.EmulatorDetector
+import com.example.pairingapp.features.settings.SettingsViewModel
+import com.example.pairingapp.features.emulators.components.EmulatorToggleList
 
 @Composable
 fun OnboardingEmulatorsSetupScreen(
@@ -52,6 +56,9 @@ fun OnboardingEmulatorsSetupScreen(
 ) {
     val context = LocalContext.current
     val detector = remember { EmulatorDetector(context) }
+
+    val settingsViewModel: SettingsViewModel = viewModel()
+    val uiState by settingsViewModel.uiState.collectAsState()
 
     var installed by remember {
         mutableStateOf<List<EmulatorDef>>(emptyList())
@@ -78,13 +85,23 @@ fun OnboardingEmulatorsSetupScreen(
     }
 
     fun toggleEmulator(emulatorId: String) {
-        val next = if (enabledEmulators.contains(emulatorId)) {
-            enabledEmulators - emulatorId
-        } else {
-            enabledEmulators + emulatorId
+        val isEnabled = enabledEmulators.contains(emulatorId)
+
+        if (isEnabled) {
+            onSetEnabledEmulators(enabledEmulators - emulatorId)
+            return
         }
 
-        onSetEnabledEmulators(next)
+        if (emulatorId == "retroarch") {
+            settingsViewModel.onRetroArchToggleRequested(
+                packageName = emulatorId,
+                enabledEmulators = enabledEmulators,
+                onSetEnabledEmulators = onSetEnabledEmulators
+            )
+            return
+        }
+
+        onSetEnabledEmulators(enabledEmulators + emulatorId)
     }
 
     Box(
@@ -93,6 +110,10 @@ fun OnboardingEmulatorsSetupScreen(
             .focusRequester(rootFocusRequester)
             .focusable()
             .onPreviewKeyEvent { event ->
+                if (uiState.showRetroArchDialog) {
+                    return@onPreviewKeyEvent false
+                }
+
                 if (event.type != KeyEventType.KeyDown) {
                     return@onPreviewKeyEvent false
                 }
@@ -172,8 +193,7 @@ fun OnboardingEmulatorsSetupScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -186,6 +206,7 @@ fun OnboardingEmulatorsSetupScreen(
 
                     Text(
                         text = stringResource(R.string.onboarding_emulators_explanation),
+                        modifier = Modifier.fillMaxWidth(),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
                         textAlign = TextAlign.Start
@@ -194,11 +215,10 @@ fun OnboardingEmulatorsSetupScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                EmulatorListContent(
+                EmulatorToggleList(
                     installed = installed,
                     enabledEmulators = enabledEmulators,
                     focusedIndex = focusedIndex,
-                    onToggle = ::toggleEmulator
                 )
             }
         }
@@ -229,79 +249,39 @@ fun OnboardingEmulatorsSetupScreen(
                 .widthIn(min = 120.dp, max = 160.dp)
         )
     }
-}
 
-@Composable
-private fun EmulatorListContent(
-    installed: List<EmulatorDef>,
-    enabledEmulators: Set<String>,
-    focusedIndex: Int,
-    onToggle: (String) -> Unit,
-    modifier: Modifier = Modifier
-        .border(2.dp, color = Color.Blue)
-) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
-        if (installed.isEmpty()) {
-            Text(
-                text = stringResource(R.string.no_emulators_detected),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                textAlign = TextAlign.Center
-            )
-        } else {
-            Column(
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                installed.forEachIndexed { index, emulator ->
-                    OnboardingEmulatorRow(
-                        emulator = emulator,
-                        enabled = enabledEmulators.contains(emulator.id),
-                        focused = focusedIndex == index,
-                        onToggle = {
-                            onToggle(emulator.id)
-                        }
-                    )
+    if (uiState.showRetroArchDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                settingsViewModel.dismissRetroArchDialog()
+            },
+            title = {
+                Text(stringResource(R.string.retroarch_dialog_title))
+            },
+            text = {
+                Text(stringResource(R.string.retroarch_dialog_message))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        settingsViewModel.confirmRetroArchSetup(
+                            enabledEmulators = enabledEmulators,
+                            onSetEnabledEmulators = onSetEnabledEmulators
+                        )
+                    }
+                ) {
+                    Text(stringResource(R.string.accept))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        settingsViewModel.dismissRetroArchDialog()
+                    }
+                ) {
+                    Text(stringResource(R.string.cancel))
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun OnboardingEmulatorRow(
-    emulator: EmulatorDef,
-    enabled: Boolean,
-    focused: Boolean,
-    onToggle: () -> Unit
-) {
-    val textColor = if (focused) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.onSurface
-    }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-        CustomSwitch(
-            checked = enabled,
-            onCheckedChange = { onToggle() },
-            checkedTrackColor = MaterialTheme.colorScheme.primary,
-            uncheckedTrackColor = MaterialTheme.colorScheme.outline,
-            thumbColor = Color.White,
-            enabled = true,
-            focused = focused
-        )
-
-        Text(
-            text = emulator.label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = textColor
         )
     }
 }
