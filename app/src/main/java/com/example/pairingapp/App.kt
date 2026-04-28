@@ -23,7 +23,6 @@ import com.example.pairingapp.core.pairing.AutoPairingService
 import com.example.pairingapp.core.settings.WriteMode
 import com.example.pairingapp.core.ui.theme.AppTheme
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.platform.LocalContext
 import com.example.pairingapp.core.settings.localized
 
 @Composable
@@ -99,11 +98,11 @@ fun App() {
                     onboardingDone = s.onboardingDone,
                     internalController1 = s.internalController1,
                     internalController2 = s.internalController2,
-                    onCompleteOnboarding = viewModel::completeOnboarding,
                     onSetInternalControllers = viewModel::setInternalControllers,
                     debugLogs = s.debugLogs,
                     onSetDebugLogs = viewModel::setDebugLogs,
                     onClearLogs = viewModel::clearLogs,
+                    onMarkOnboardingDone = viewModel::markOnboardingDone,
                 )
             }
         }

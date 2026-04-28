@@ -44,9 +44,8 @@ class AppViewModel(
         }
     }
 
-    fun completeOnboarding(i1: String?, i2: String?) {
+    fun markOnboardingDone() {
         viewModelScope.launch {
-            repo.setInternalControllers(i1, i2)
             repo.setOnboardingDone(true)
         }
     }

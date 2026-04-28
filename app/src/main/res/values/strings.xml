@@ -78,4 +78,8 @@ You don’t need to configure both profiles and you can modify this later in the
     <string name="auto_pairing_service_channel_name">Automatic pairing</string>
     <string name="auto_pairing_service_title">Automatic pairing active</string>
     <string name="auto_pairing_service_text">Controller detection and auto-write stay active in background.</string>
+
+    <string name="onboarding_emulators_title">Choose emulators</string>
+    <string name="onboarding_emulators_explanation">PairingApp will only write controller configs for emulators enabled here. You can change this later in Settings.</string>
+    <string name="finish">Finish</string>
 </resources>

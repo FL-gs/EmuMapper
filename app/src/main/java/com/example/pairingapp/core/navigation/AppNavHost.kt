@@ -20,6 +20,7 @@ import com.example.pairingapp.features.pairing.PairingScreen
 import com.example.pairingapp.features.pairing.PairingViewModel
 import com.example.pairingapp.features.pairing.PairingViewModelFactory
 import com.example.pairingapp.features.settings.SettingsHomeScreen
+import com.example.pairingapp.features.onboarding.emulators.OnboardingEmulatorsSetupScreen
 
 @Composable
 fun AppNavHost(
@@ -35,10 +36,10 @@ fun AppNavHost(
     onboardingDone: Boolean,
     internalController1: String?,
     internalController2: String?,
-    onCompleteOnboarding: (String?, String?) -> Unit,
     debugLogs: Boolean,
     onSetDebugLogs: (Boolean) -> Unit,
     onClearLogs: () -> Unit,
+    onMarkOnboardingDone: () -> Unit,
 ) {
     val navController = rememberNavController()
 
@@ -85,7 +86,18 @@ fun AppNavHost(
                 initialInternal1 = internalController1,
                 initialInternal2 = internalController2,
                 onDone = { i1, i2 ->
-                    onCompleteOnboarding(i1, i2)
+                    onSetInternalControllers(i1, i2)
+                    navController.navigate(Routes.OnboardingEmulatorsSetup)
+                }
+            )
+        }
+
+        composable(Routes.OnboardingEmulatorsSetup) {
+            OnboardingEmulatorsSetupScreen(
+                enabledEmulators = enabledEmulators,
+                onSetEnabledEmulators = onSetEnabledEmulators,
+                onDone = {
+                    onMarkOnboardingDone()
                     navController.navigate(Routes.Pairing) {
                         popUpTo(Routes.InternalControllersSetup) { inclusive = true }
                     }
