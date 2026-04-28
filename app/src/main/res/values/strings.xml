@@ -8,8 +8,8 @@
     <string name="internal_controllers_explanation">
 Select your console’s internal controller profiles so they can be distinguished from external ones.
 
-Turn off any external controllers before setup.
-You don’t need to configure both profiles and you can modify this later in the app settings.
+\nTurn off any external controllers before setup.
+\nYou don’t need to configure both profiles and you can modify this later in the app settings.
 </string>
 
     <string name="internal_controllers_title">Built-In Controllers</string>
@@ -26,7 +26,7 @@ You don’t need to configure both profiles and you can modify this later in the
     <string name="settings_category_write_mode">Writing Mode</string>
     <string name="hint_navigate">Navigate</string>
     <string name="hint_choose">Choose</string>
-    <string name="hint_enter">Ok</string>
+    <string name="hint_enter">OK</string>
     <string name="hint_back">Back</string>
     <string name="hint_activate">Activate</string>
     <string name="hint_deactivate">Deactivate</string>
@@ -79,7 +79,7 @@ You don’t need to configure both profiles and you can modify this later in the
     <string name="auto_pairing_service_title">Automatic pairing active</string>
     <string name="auto_pairing_service_text">Controller detection and auto-write stay active in background.</string>
 
-    <string name="onboarding_emulators_title">Choose emulators</string>
-    <string name="onboarding_emulators_explanation">PairingApp will only write controller configs for emulators enabled here. You can change this later in Settings.</string>
+    <string name="onboarding_emulators_title">Emulators</string>
+    <string name="onboarding_emulators_explanation">PairingApp will only write controller configs for enabled emulators.\nYou can change this later in Settings.</string>
     <string name="finish">Finish</string>
 </resources>

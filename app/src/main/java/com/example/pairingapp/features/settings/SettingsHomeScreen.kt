@@ -22,12 +22,10 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pairingapp.R
-import com.example.pairingapp.core.input.GamepadAction
 import com.example.pairingapp.core.input.PadKey
 import com.example.pairingapp.core.input.mapKeyEvent
 import com.example.pairingapp.core.settings.AppLanguage
 import com.example.pairingapp.core.settings.WriteMode
-import com.example.pairingapp.core.ui.components.ActionHint
 import com.example.pairingapp.core.ui.components.HintBarState
 import com.example.pairingapp.core.ui.components.rememberHintsForState
 import com.example.pairingapp.features.settings.app.AppSettingsScreen
@@ -91,7 +89,7 @@ fun SettingsHomeScreen(
         }
     }
 
-    val categories = SettingsCategory.values().toList()
+    val categories = SettingsCategory.entries
     val selectedIndex = categories.indexOf(selected)
 
     fun moveSelection(delta: Int) {
@@ -175,7 +173,7 @@ fun SettingsHomeScreen(
                         internalController2 = internalController2,
                         onSetInternalControllers = onSetInternalControllers,
                         onHintStateChanged = { state ->
-                            if (mode == SettingsMode.CATEGORY && selected == SettingsCategory.APPEARANCE) {
+                            if (mode == SettingsMode.CATEGORY) {
                                 contentHintState = state
                             }
                         }
@@ -187,17 +185,17 @@ fun SettingsHomeScreen(
                         active = (mode == SettingsMode.CATEGORY),
                         enabledPackages = enabledEmulators,
                         onSetEnabledPackages = onSetEnabledEmulators,
+                        onHintStateChanged = { state ->
+                            if (mode == SettingsMode.CATEGORY) {
+                                contentHintState = state
+                            }
+                        },
                         onRequestEnableRetroArch = { pkg ->
                             settingsViewModel.onRetroArchToggleRequested(
                                 packageName = pkg,
                                 enabledEmulators = enabledEmulators,
                                 onSetEnabledEmulators = onSetEnabledEmulators,
                             )
-                        },
-                        onHintStateChanged = { state ->
-                            if (mode == SettingsMode.CATEGORY && selected == SettingsCategory.EMULATORS) {
-                                contentHintState = state
-                            }
                         }
                     )
                 }
@@ -209,7 +207,7 @@ fun SettingsHomeScreen(
                         onSetDebugLogs = onSetDebugLogs,
                         onClearLogs = onClearLogs,
                         onHintStateChanged = { state ->
-                            if (mode == SettingsMode.CATEGORY && selected == SettingsCategory.DEBUG) {
+                            if (mode == SettingsMode.CATEGORY) {
                                 contentHintState = state
                             }
                         }

@@ -1,7 +1,6 @@
 package com.example.pairingapp.features.pairing
 
 import android.view.KeyEvent
-import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,7 +35,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.pairingapp.R
 import com.example.pairingapp.core.input.ControllerDisplay
-import com.example.pairingapp.core.input.ControllerInfo
 import com.example.pairingapp.core.input.GamepadAction
 import com.example.pairingapp.core.input.PadKey
 import com.example.pairingapp.core.input.mapKeyEvent

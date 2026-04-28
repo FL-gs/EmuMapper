@@ -20,7 +20,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.example.pairingapp.core.input.PadKey
@@ -35,9 +35,9 @@ fun EmulatorsScreen(
     active: Boolean,
     enabledPackages: Set<String>,
     onSetEnabledPackages: (Set<String>) -> Unit,
-    onRequestEnableRetroArch: ((String) -> Unit)? = null,
     onHintStateChanged: (HintBarState) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRequestEnableRetroArch: ((String) -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current

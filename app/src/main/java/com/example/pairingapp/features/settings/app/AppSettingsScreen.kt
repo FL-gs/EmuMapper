@@ -105,7 +105,7 @@ fun AppSettingsScreen(
     }
 
     val writeModes = remember {
-        WriteMode.values().toList()
+        WriteMode.entries
     }
 
     val currentTheme = if (darkTheme) ThemeOption.DARK else ThemeOption.LIGHT
