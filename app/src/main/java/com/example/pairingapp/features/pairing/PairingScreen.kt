@@ -113,6 +113,7 @@ fun PairingScreen(
     val context = LocalContext.current
 
     val writeSuccessLabel = stringResource(R.string.controllers_saved)
+    val noEmulatorEnabledLabel = stringResource(R.string.no_emulator_enabled)
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -130,6 +131,8 @@ fun PairingScreen(
     val activeInstalled = remember(installed, enabledEmulators) {
         installed.filter { enabledEmulators.contains(it.id) }
     }
+
+    val hasEnabledEmulators = activeInstalled.isNotEmpty()
 
     val controllerHintStyle = controllers.firstOrNull()?.let {
         ControllerDisplay.hintStyleFor(it.controller)
@@ -206,6 +209,10 @@ fun PairingScreen(
                     }
 
                     event.type == KeyEventType.KeyDown && key == PadKey.START -> {
+                        if (!hasEnabledEmulators) {
+                            return@onPreviewKeyEvent true
+                        }
+
                         if (!isStartEventFromPlayer1(native, controllers)) {
                             return@onPreviewKeyEvent true
                         }
@@ -215,6 +222,10 @@ fun PairingScreen(
                     }
 
                     event.type == KeyEventType.KeyUp && key == PadKey.START -> {
+                        if (!hasEnabledEmulators) {
+                            return@onPreviewKeyEvent true
+                        }
+
                         if (!isStartEventFromPlayer1(native, controllers)) {
                             return@onPreviewKeyEvent true
                         }
@@ -270,40 +281,49 @@ fun PairingScreen(
                 contentAlignment = Alignment.Center
             ) {
                 if (hasControllers && writeMode != WriteMode.AUTO) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        if (isCurrentConfigWritten) {
-                            Text(
-                                text = writeSuccessLabel,
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        } else {
-                            HoldStartToWriteLabel(
-                                controllerHintStyle = controllerHintStyle,
-                                color = animatedHoldStartColor
-                            )
-                        }
-
-                        ProgressBar(
-                            progress = manualWriteHoldProgress,
-                            fillColor = progressColor,
-                            modifier = Modifier
-                                .padding(top = 10.dp)
-                                .width(200.dp)
+                    if (!hasEnabledEmulators) {
+                        Text(
+                            text = noEmulatorEnabledLabel,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.align(Alignment.TopCenter)
                         )
-                        Box(
-                            modifier = Modifier
-                                .height(24.dp),
-                            contentAlignment = Alignment.Center
+                    } else {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            if (!isCurrentConfigWritten && writeErrorText != null) {
+                            if (isCurrentConfigWritten) {
                                 Text(
-                                    text = writeErrorText,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.error
+                                    text = writeSuccessLabel,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.primary
                                 )
+                            } else {
+                                HoldStartToWriteLabel(
+                                    controllerHintStyle = controllerHintStyle,
+                                    color = animatedHoldStartColor
+                                )
+                            }
+
+                            ProgressBar(
+                                progress = manualWriteHoldProgress,
+                                fillColor = progressColor,
+                                modifier = Modifier
+                                    .padding(top = 10.dp)
+                                    .width(200.dp)
+                            )
+
+                            Box(
+                                modifier = Modifier.height(24.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (!isCurrentConfigWritten && writeErrorText != null) {
+                                    Text(
+                                        text = writeErrorText,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
                             }
                         }
                     }

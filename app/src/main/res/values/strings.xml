@@ -53,6 +53,7 @@ You don’t need to configure both profiles and you can modify this later in the
     <string name="to_write">to write</string>
     <string name="hint_settings">Settings</string>
     <string name="hint_hold_to_write">Hold to write</string>
+    <string name="no_emulator_enabled">At least one emulator must be enabled in Settings</string>
 
     <string name="connect_controllers_hint">Connect controllers\nto detect them automatically</string>
     <string name="player_format">Player %1$d</string>

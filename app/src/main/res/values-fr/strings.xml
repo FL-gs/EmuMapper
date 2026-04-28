@@ -54,6 +54,7 @@ Vous n’avez pas besoin de configurer les deux profils et vous pourrez modifier
     <string name="hint_settings">Paramètres</string>
     <string name="hint_hold_to_write">Maintenir pour écrire</string>
 
+    <string name="no_emulator_enabled">Au moins un émulateur doit être activé dans les paramètres</string>
     <string name="connect_controllers_hint">Connectez des manettes\npour les détecter automatiquement</string>
     <string name="player_format">Joueur %1$d</string>
     <string name="swap_ab">Inverser A/B</string>
