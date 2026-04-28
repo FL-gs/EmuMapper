@@ -1,18 +1,15 @@
 ﻿package com.example.pairingapp.features.onboarding.internalcontrollers
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
@@ -59,7 +57,6 @@ fun InternalControllersSetupScreen(
     val internalController1Label = stringResource(R.string.internal_controller_1)
     val internalController2Label = stringResource(R.string.internal_controller_2)
     val nextLabel = stringResource(R.string.next)
-
     val explanationText = stringResource(R.string.internal_controllers_explanation)
 
     val FOCUS_SLOT_1 = 0
@@ -140,168 +137,88 @@ fun InternalControllersSetupScreen(
                 }
             }
     ) {
-        BoxWithConstraints(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .widthIn(max = 600.dp)
+                .fillMaxWidth()
+                .padding(
+                    horizontal = 24.dp,
+                    vertical = 64.dp
+                )
+                .border(2.dp, color = Color.Red)
         ) {
-            val isCompact = maxWidth.value < 900f
-            val horizontalPadding = if (isCompact) 24.dp else 64.dp
-            val verticalPadding = if (isCompact) 24.dp else 48.dp
-
-            Box(
+            Column(
                 modifier = Modifier
-                    .widthIn(max = 600.dp)
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = horizontalPadding,
-                        vertical = verticalPadding
-                    )
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (isCompact) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(bottom = 88.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(20.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.headlineLarge,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                textAlign = TextAlign.Center
-                            )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center
+                    )
 
-                            Text(
-                                text = explanationText,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
-                                textAlign = TextAlign.Center
-                            )
+                    Text(
+                        text = explanationText,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
+                        textAlign = TextAlign.Start
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .widthIn(max = 420.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    ActionButton(
+                        text = internalControllerLabel(
+                            internal1,
+                            choices,
+                            noneLabel
+                        ),
+                        selected = false,
+                        active = true,
+                        focusRequester = focusRequesters[0],
+                        previousFocusRequester = null,
+                        nextFocusRequester = focusRequesters[1],
+                        focused = focusedIndex == FOCUS_SLOT_1,
+                        onClick = {
+                            focusedIndex = FOCUS_SLOT_1
+                            pickerViewModel.open(noneLabel)
                         }
+                    )
 
-                        Spacer(modifier = Modifier.height(32.dp))
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .widthIn(max = 420.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            ActionButton(
-                                text = internalControllerLabel(
-                                    internal1,
-                                    choices,
-                                    noneLabel
-                                ),
-                                selected = false,
-                                active = true,
-                                focusRequester = focusRequesters[0],
-                                previousFocusRequester = null,
-                                nextFocusRequester = focusRequesters[1],
-                                focused = focusedIndex == FOCUS_SLOT_1,
-                                onClick = {
-                                    focusedIndex = FOCUS_SLOT_1
-                                    pickerViewModel.open(noneLabel)
-                                }
-                            )
-
-                            ActionButton(
-                                text = internalControllerLabel(
-                                    internal2,
-                                    choices,
-                                    noneLabel
-                                ),
-                                selected = false,
-                                active = true,
-                                focusRequester = focusRequesters[1],
-                                previousFocusRequester = focusRequesters[0],
-                                nextFocusRequester = focusRequesters[2],
-                                focused = focusedIndex == FOCUS_SLOT_2,
-                                onClick = {
-                                    focusedIndex = FOCUS_SLOT_2
-                                    pickerViewModel.open(noneLabel)
-                                }
-                            )
+                    ActionButton(
+                        text = internalControllerLabel(
+                            internal2,
+                            choices,
+                            noneLabel
+                        ),
+                        selected = false,
+                        active = true,
+                        focusRequester = focusRequesters[1],
+                        previousFocusRequester = focusRequesters[0],
+                        nextFocusRequester = focusRequesters[2],
+                        focused = focusedIndex == FOCUS_SLOT_2,
+                        onClick = {
+                            focusedIndex = FOCUS_SLOT_2
+                            pickerViewModel.open(noneLabel)
                         }
-                    }
-                } else {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(bottom = 88.dp),
-                        horizontalArrangement = Arrangement.spacedBy(89.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight(),
-                            verticalArrangement = Arrangement.Top
-                        ) {
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.headlineLarge,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-
-                            Spacer(modifier = Modifier.height(24.dp))
-
-                            Text(
-                                text = explanationText,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f)
-                            )
-                        }
-
-                        Column(
-                            modifier = Modifier.width(300.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            ActionButton(
-                                text = internalControllerLabel(
-                                    internal1,
-                                    choices,
-                                    noneLabel
-                                ),
-                                selected = false,
-                                active = true,
-                                focusRequester = focusRequesters[0],
-                                previousFocusRequester = null,
-                                nextFocusRequester = focusRequesters[1],
-                                focused = focusedIndex == FOCUS_SLOT_1,
-                                onClick = {
-                                    focusedIndex = FOCUS_SLOT_1
-                                    pickerViewModel.open(noneLabel)
-                                }
-                            )
-
-                            ActionButton(
-                                text = internalControllerLabel(
-                                    internal2,
-                                    choices,
-                                    noneLabel
-                                ),
-                                selected = false,
-                                active = true,
-                                focusRequester = focusRequesters[1],
-                                previousFocusRequester = focusRequesters[0],
-                                nextFocusRequester = focusRequesters[2],
-                                focused = focusedIndex == FOCUS_SLOT_2,
-                                onClick = {
-                                    focusedIndex = FOCUS_SLOT_2
-                                    pickerViewModel.open(noneLabel)
-                                }
-                            )
-                        }
-                    }
+                    )
                 }
             }
         }

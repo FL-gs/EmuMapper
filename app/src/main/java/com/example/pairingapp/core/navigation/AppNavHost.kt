@@ -96,6 +96,9 @@ fun AppNavHost(
             OnboardingEmulatorsSetupScreen(
                 enabledEmulators = enabledEmulators,
                 onSetEnabledEmulators = onSetEnabledEmulators,
+                onBack = {
+                    navController.popBackStack(Routes.InternalControllersSetup, false)
+                },
                 onDone = {
                     onMarkOnboardingDone()
                     navController.navigate(Routes.Pairing) {
