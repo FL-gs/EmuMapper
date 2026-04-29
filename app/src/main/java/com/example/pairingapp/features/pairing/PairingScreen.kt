@@ -159,27 +159,25 @@ fun PairingScreen(
     val hints = rememberHintsForState(hintState)
 
     val writeErrorText = when (val result = lastWriteResult) {
+
         is WriteResult.Failure -> {
-            stringResource(R.string.write_failed, result.emulatorId)
+            "${result.emulatorId}: ${result.reason}"
         }
 
         is WriteResult.PartialFailure -> {
-            val ids = result.failures.map { it.emulatorId }
+            val messages = result.failures.map {
+                "${it.emulatorId}: ${it.reason}"
+            }
 
             when {
-                ids.size <= 2 -> {
-                    val joined = ids.joinToString(", ")
-                    stringResource(R.string.write_failed, joined)
+                messages.size <= 2 -> {
+                    messages.joinToString(", ")
                 }
 
                 else -> {
-                    val firstTwo = ids.take(2).joinToString(", ")
-                    val remaining = ids.size - 2
-                    stringResource(
-                        R.string.write_failed_multiple,
-                        firstTwo,
-                        remaining
-                    )
+                    val firstTwo = messages.take(2).joinToString(", ")
+                    val remaining = messages.size - 2
+                    "$firstTwo + $remaining more"
                 }
             }
         }
