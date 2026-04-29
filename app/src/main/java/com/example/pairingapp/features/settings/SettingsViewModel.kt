@@ -2,8 +2,6 @@ package com.example.pairingapp.features.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pairingapp.core.utils.AppLogger
-import com.example.pairingapp.core.utils.LogTags
 import com.example.pairingapp.data.ini.retroarch.RetroArchPaths
 import com.example.pairingapp.data.ini.retroarch.RetroArchRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,25 +23,7 @@ class SettingsViewModel : ViewModel() {
         enabledEmulators: Set<String>,
         onSetEnabledEmulators: (Set<String>) -> Unit,
     ) {
-        viewModelScope.launch {
-            val expectedPath = RetroArchPaths.appAutoconfigDir().path
-            val configuredPath = RetroArchRepository.readAutoconfigDir()
-
-            AppLogger.d(
-                LogTags.INI,
-                "retroarch check | configured=${configuredPath ?: "unset"} | expected=$expectedPath | match=${configuredPath == expectedPath}"
-            )
-
-            if (configuredPath == expectedPath) {
-                onSetEnabledEmulators(enabledEmulators + packageName)
-                return@launch
-            }
-
-            _uiState.value = SettingsUiState(
-                showRetroArchDialog = true,
-                pendingRetroArchPackage = packageName
-            )
-        }
+        onSetEnabledEmulators(enabledEmulators + packageName)
     }
 
     fun confirmRetroArchSetup(

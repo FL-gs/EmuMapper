@@ -48,13 +48,8 @@ object RetroArchRepository {
 
         val original = cfgFile.readText()
 
-        val patchedAutoconfig = RetroArchMainConfigPatcher.patchIni(
-            original = original,
-            autoconfigPath = autoconfigPath
-        )
-
         val patched = RetroArchReservationPatcher.patchCfg(
-            original = patchedAutoconfig,
+            original = original,
             controllers = controllers
         )
 
