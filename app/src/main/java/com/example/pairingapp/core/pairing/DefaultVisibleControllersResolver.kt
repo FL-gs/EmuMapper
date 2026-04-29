@@ -49,7 +49,7 @@ class DefaultVisibleControllersResolver : VisibleControllersResolver {
             }
 
             target += info
-            AppLogger.d(LogTags.PAIRING, "pairing add | $type | $line")
+            AppLogger.d(LogTags.PAIRING, "scan | $type | $line")
         }
 
         return if (externalControllers.isNotEmpty()) {

@@ -22,7 +22,6 @@ class AutoPairingService : Service() {
 
         createNotificationChannel()
 
-        AppLogger.d(LogTags.SERVICE, "service | attachHost")
         applicationContext.appGraph.pairingEngine.attachHost(HOST_ID)
     }
 
@@ -40,7 +39,6 @@ class AutoPairingService : Service() {
     override fun onDestroy() {
         AppLogger.d(LogTags.SERVICE, "service | onDestroy")
 
-        AppLogger.d(LogTags.SERVICE, "service | detachHost")
         applicationContext.appGraph.pairingEngine.detachHost(HOST_ID)
 
         super.onDestroy()

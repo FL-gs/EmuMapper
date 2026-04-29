@@ -129,14 +129,19 @@ class PairingEngine(
     }
 
     private fun applySettings(settings: AppSettings) {
+        val previousSettings = currentSettings
         val wasInitialized = settingsInitialized
 
         val internalControllersChanged =
-            currentSettings.internalController1 != settings.internalController1 ||
-                    currentSettings.internalController2 != settings.internalController2
+            previousSettings.internalController1 != settings.internalController1 ||
+                    previousSettings.internalController2 != settings.internalController2
+
+        val writeRelevantSettingsChanged =
+            previousSettings.writeMode != settings.writeMode ||
+                    previousSettings.enabledEmulators != settings.enabledEmulators
 
         val debugLogsJustEnabled =
-            !currentSettings.debugLogs && settings.debugLogs
+            !previousSettings.debugLogs && settings.debugLogs
 
         currentSettings = settings
         settingsInitialized = true
@@ -145,13 +150,22 @@ class PairingEngine(
         AppLogger.enabled = settings.debugLogs
 
         if (debugLogsJustEnabled) {
+            DebugContextLogger.logAppInfo()
             DebugContextLogger.logDeviceInfo()
         }
 
-        DebugContextLogger.logAppSettings(
-            settings = settings,
-            hasActiveHosts = hasActiveHosts()
-        )
+        if (!wasInitialized || debugLogsJustEnabled) {
+            DebugContextLogger.logAppSettings(
+                settings = settings,
+                hasActiveHosts = hasActiveHosts()
+            )
+        } else {
+            DebugContextLogger.logSettingsChanges(
+                previous = previousSettings,
+                current = settings,
+                hasActiveHosts = hasActiveHosts()
+            )
+        }
 
         if (!hasActiveHosts()) {
             return
@@ -167,7 +181,9 @@ class PairingEngine(
             return
         }
 
-        handleControllersChanged(_visibleControllers.value)
+        if (writeRelevantSettingsChanged) {
+            handleControllersChanged(_visibleControllers.value)
+        }
     }
 
     private fun startMonitoring() {
@@ -213,11 +229,6 @@ class PairingEngine(
 
         resyncJob?.cancel()
 
-        AppLogger.d(
-            LogTags.PAIRING,
-            "resync scheduled | reason=$reason | delay=${DEVICE_RESYNC_DEBOUNCE_MS}ms"
-        )
-
         resyncJob = scope.launch {
             delay(DEVICE_RESYNC_DEBOUNCE_MS)
             AppLogger.d(LogTags.PAIRING, "resync firing | reason=$reason")
@@ -254,11 +265,6 @@ class PairingEngine(
         AppLogger.d(
             LogTags.PAIRING,
             "pairing state | active updated | source=$source\ncontrollers:\n${controllers.toLogBlock()}"
-        )
-
-        AppLogger.d(
-            LogTags.PAIRING,
-            "pairing state | scan complete\ncontrollers:\n${controllers.toLogBlock()}"
         )
 
         handleControllersChanged(controllers)

@@ -66,9 +66,7 @@ class PairingWriteCoordinator(
         ) {
             WriteDecision.AlreadyWritten -> Unit
 
-            WriteDecision.ManualMode -> {
-                AppLogger.d(LogTags.INI, "write queue | skipped | reason=manual_mode")
-            }
+            WriteDecision.ManualMode -> Unit
 
             WriteDecision.NoControllers -> {
                 AppLogger.d(LogTags.INI, "write queue | skipped | reason=no_controllers")

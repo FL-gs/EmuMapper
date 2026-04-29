@@ -17,7 +17,7 @@ class PairingApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        AppLogger.init(this) // init de base (optionnel)
+        AppLogger.init(this)
 
         appGraph = AppGraph(this)
 
@@ -36,6 +36,7 @@ class PairingApplication : Application() {
                     if (enabled) {
                         AppLogger.enabled = true
                         AppLogger.init(this@PairingApplication)
+
                     } else {
                         AppLogger.enabled = false
                     }
