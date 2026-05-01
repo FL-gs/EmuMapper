@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-private const val MANUAL_WRITE_HOLD_MS = 600L
+private const val MANUAL_WRITE_HOLD_MS = 1_000L
 private const val HOLD_PROGRESS_TICK_MS = 16L
 private const val SUCCESS_FLASH_MS = 800L
 
