@@ -1,6 +1,7 @@
 package com.example.pairingapp.features.pairing
 
 import android.view.KeyEvent
+import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
@@ -41,6 +43,8 @@ import com.example.pairingapp.core.ui.components.rememberHintsForState
 import com.example.pairingapp.data.emulators.EmulatorDetector
 import com.example.pairingapp.features.pairing.ui.ControllerGrid
 import com.example.pairingapp.features.pairing.ui.status.WriteStatusIndicator
+import com.example.pairingapp.features.pairing.ui.status.WriteSuccessIcon
+
 
 private fun isStartEventFromPlayer1(
     nativeEvent: KeyEvent,
@@ -196,24 +200,37 @@ fun PairingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.15f),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.TopCenter
             ) {
-                if (hasControllers && writeMode != WriteMode.AUTO) {
-                    if (!hasEnabledEmulators) {
-                        Text(
-                            text = noEmulatorEnabledLabel,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    } else {
-                        WriteStatusIndicator(
-                            progress = manualWriteHoldProgress,
-                            writing = manualWritePressed || manualWriteHoldProgress > 0f,
-                            completed = isCurrentConfigWritten,
-                            controllerHintStyle = controllerHintStyle,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                if (hasControllers) {
+                    when {
+                        !hasEnabledEmulators -> {
+                            Text(
+                                text = noEmulatorEnabledLabel,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+
+                        writeMode == WriteMode.AUTO -> {
+                            WriteSuccessIcon(
+                                visible = isCurrentConfigWritten,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        else -> {
+                            WriteStatusIndicator(
+                                progress = manualWriteHoldProgress,
+                                writing = manualWritePressed || manualWriteHoldProgress > 0f,
+                                completed = isCurrentConfigWritten,
+                                controllerHintStyle = controllerHintStyle,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 16.dp)
+                            )
+                        }
                     }
                 }
             }
