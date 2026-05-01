@@ -23,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
@@ -44,7 +43,10 @@ import com.example.pairingapp.data.emulators.EmulatorDetector
 import com.example.pairingapp.features.pairing.ui.ControllerGrid
 import com.example.pairingapp.features.pairing.ui.status.WriteStatusIndicator
 import com.example.pairingapp.features.pairing.ui.status.WriteSuccessIcon
-
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import com.example.pairingapp.data.ini.WriteResult
+import com.example.pairingapp.features.pairing.ui.status.WriteErrorBanner
 
 private fun isStartEventFromPlayer1(
     nativeEvent: KeyEvent,
@@ -71,6 +73,7 @@ fun PairingScreen(
         focusRequester.requestFocus()
     }
 
+    val lastWriteResult by viewModel.lastWriteResult.collectAsState()
     val controllers by viewModel.controllers.collectAsState()
     val manualWriteHoldProgress by viewModel.manualWriteHoldProgress.collectAsState()
     val writeMode by viewModel.writeMode.collectAsState()
@@ -86,6 +89,25 @@ fun PairingScreen(
 
     val hasEnabledEmulators = activeInstalled.isNotEmpty()
     val hasControllers = controllers.isNotEmpty()
+
+    val hasWriteError =
+        lastWriteResult is WriteResult.Failure ||
+                lastWriteResult is WriteResult.PartialFailure
+
+    val manualWriteReachedEnd = manualWriteHoldProgress >= 1f
+
+    val showWriteError =
+        hasControllers &&
+                hasEnabledEmulators &&
+                hasWriteError &&
+                (!manualWritePressed || manualWriteReachedEnd)
+
+    val writeIsInProgress =
+        !showWriteError &&
+                (manualWritePressed || manualWriteHoldProgress > 0f)
+
+    val displayedManualWriteProgress =
+        if (showWriteError) 0f else manualWriteHoldProgress
 
     LaunchedEffect(hasControllers, hasEnabledEmulators, writeMode) {
         if (!hasControllers || !hasEnabledEmulators || writeMode == WriteMode.AUTO) {
@@ -209,36 +231,45 @@ fun PairingScreen(
                                 text = noEmulatorEnabledLabel,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.align(Alignment.Center)
+                                modifier = Modifier.align(Alignment.TopCenter)
                             )
                         }
 
                         writeMode == WriteMode.AUTO -> {
                             WriteSuccessIcon(
                                 visible = isCurrentConfigWritten,
-                                color = MaterialTheme.colorScheme.primary
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.align(Alignment.TopCenter)
                             )
                         }
 
                         else -> {
                             WriteStatusIndicator(
-                                progress = manualWriteHoldProgress,
-                                writing = manualWritePressed || manualWriteHoldProgress > 0f,
+                                progress = displayedManualWriteProgress,
+                                writing = writeIsInProgress,
                                 completed = isCurrentConfigWritten,
                                 controllerHintStyle = controllerHintStyle,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 16.dp)
+                                    .align(Alignment.TopCenter)
                             )
                         }
                     }
                 }
             }
 
+
             ActionHintBar(
                 hints = hints,
                 controllerHintStyle = controllerHintStyle
             )
         }
+        WriteErrorBanner(
+            result = lastWriteResult,
+            visible = showWriteError,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp)
+        )
     }
 }
