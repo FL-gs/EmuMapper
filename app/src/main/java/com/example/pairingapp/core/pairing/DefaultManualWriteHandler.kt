@@ -11,25 +11,23 @@ import kotlinx.coroutines.launch
 
 private const val MANUAL_WRITE_HOLD_MS = 1_000L
 private const val HOLD_PROGRESS_TICK_MS = 16L
-private const val SUCCESS_FLASH_MS = 800L
 
 class DefaultManualWriteHandler(
     private val scope: CoroutineScope
 ) : ManualWriteHandler {
 
     private var job: Job? = null
-    private var latched = false
 
-    private val _progress = MutableStateFlow(0f)
-    override val progress: StateFlow<Float> = _progress.asStateFlow()
+    private val _uiState = MutableStateFlow<ManualWriteUiState>(ManualWriteUiState.Idle)
+    override val uiState: StateFlow<ManualWriteUiState> = _uiState.asStateFlow()
 
-    private val _showSuccessFlash = MutableStateFlow(false)
-    override val showSuccessFlash: StateFlow<Boolean> = _showSuccessFlash.asStateFlow()
+    override fun start(
+        onCompleted: suspend () -> Boolean
+    ): Boolean {
+        if (job != null) return false
+        if (_uiState.value !is ManualWriteUiState.Idle) return false
 
-    override fun start(onCompleted: suspend () -> Unit) {
-        if (latched || job != null || _showSuccessFlash.value) return
-
-        _progress.value = 0f
+        _uiState.value = ManualWriteUiState.Holding(progress = 0f)
 
         job = scope.launch {
             val startTime = SystemClock.elapsedRealtime()
@@ -40,34 +38,46 @@ class DefaultManualWriteHandler(
                     val progress = (elapsed.toFloat() / MANUAL_WRITE_HOLD_MS.toFloat())
                         .coerceIn(0f, 1f)
 
-                    _progress.value = progress
+                    _uiState.value = ManualWriteUiState.Holding(progress)
 
                     if (elapsed >= MANUAL_WRITE_HOLD_MS) break
                     delay(HOLD_PROGRESS_TICK_MS)
                 }
 
-                latched = true
+                _uiState.value = ManualWriteUiState.Writing
 
-                onCompleted()
+                val success = onCompleted()
 
-                _progress.value = 1f
-                _showSuccessFlash.value = true
-                delay(SUCCESS_FLASH_MS)
+                _uiState.value = if (success) {
+                    ManualWriteUiState.Success
+                } else {
+                    ManualWriteUiState.Idle
+                }
             } finally {
-                _showSuccessFlash.value = false
-                _progress.value = 0f
-                latched = false
                 job = null
             }
         }
+
+        return true
     }
 
     override fun cancel() {
-        if (_showSuccessFlash.value) return
-        if (latched) return
+        if (_uiState.value !is ManualWriteUiState.Holding) return
 
         job?.cancel()
         job = null
-        _progress.value = 0f
+        _uiState.value = ManualWriteUiState.Idle
+    }
+
+    override fun reset() {
+        job?.cancel()
+        job = null
+        _uiState.value = ManualWriteUiState.Idle
+    }
+
+    override fun markSuccess() {
+        job?.cancel()
+        job = null
+        _uiState.value = ManualWriteUiState.Success
     }
 }

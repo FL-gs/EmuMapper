@@ -1,7 +1,6 @@
 package com.example.pairingapp.features.pairing
 
 import android.view.KeyEvent
-import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,9 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -33,6 +30,7 @@ import com.example.pairingapp.R
 import com.example.pairingapp.core.input.ControllerDisplay
 import com.example.pairingapp.core.input.PadKey
 import com.example.pairingapp.core.input.mapKeyEvent
+import com.example.pairingapp.core.pairing.ManualWriteUiState
 import com.example.pairingapp.core.settings.WriteMode
 import com.example.pairingapp.core.ui.components.ActionHintBar
 import com.example.pairingapp.core.ui.components.ControllerHintStyle
@@ -40,13 +38,11 @@ import com.example.pairingapp.core.ui.components.EmulatorIconRail
 import com.example.pairingapp.core.ui.components.HintBarState
 import com.example.pairingapp.core.ui.components.rememberHintsForState
 import com.example.pairingapp.data.emulators.EmulatorDetector
+import com.example.pairingapp.data.ini.WriteResult
 import com.example.pairingapp.features.pairing.ui.ControllerGrid
+import com.example.pairingapp.features.pairing.ui.status.WriteErrorBanner
 import com.example.pairingapp.features.pairing.ui.status.WriteStatusIndicator
 import com.example.pairingapp.features.pairing.ui.status.WriteSuccessIcon
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import com.example.pairingapp.data.ini.WriteResult
-import com.example.pairingapp.features.pairing.ui.status.WriteErrorBanner
 
 private fun isStartEventFromPlayer1(
     nativeEvent: KeyEvent,
@@ -75,11 +71,9 @@ fun PairingScreen(
 
     val lastWriteResult by viewModel.lastWriteResult.collectAsState()
     val controllers by viewModel.controllers.collectAsState()
-    val manualWriteHoldProgress by viewModel.manualWriteHoldProgress.collectAsState()
     val writeMode by viewModel.writeMode.collectAsState()
     val isCurrentConfigWritten by viewModel.isCurrentConfigWritten.collectAsState()
-
-    var manualWritePressed by remember { mutableStateOf(false) }
+    val manualWriteUiState by viewModel.manualWriteUiState.collectAsState()
 
     val detector = remember { EmulatorDetector(context) }
     val installed = remember { detector.installedEmulators() }
@@ -94,26 +88,26 @@ fun PairingScreen(
         lastWriteResult is WriteResult.Failure ||
                 lastWriteResult is WriteResult.PartialFailure
 
-    val manualWriteReachedEnd = manualWriteHoldProgress >= 1f
+    val manualWriteProgress = when (val state = manualWriteUiState) {
+        ManualWriteUiState.Idle -> 0f
+        is ManualWriteUiState.Holding -> state.progress
+        ManualWriteUiState.Writing -> 1f
+        ManualWriteUiState.Success -> 1f
+    }
+
+    val manualWriteInProgress =
+        manualWriteUiState is ManualWriteUiState.Holding ||
+                manualWriteUiState is ManualWriteUiState.Writing
+
+    val manualWriteCompleted =
+        manualWriteUiState is ManualWriteUiState.Success ||
+                isCurrentConfigWritten
 
     val showWriteError =
         hasControllers &&
                 hasEnabledEmulators &&
                 hasWriteError &&
-                (!manualWritePressed || manualWriteReachedEnd)
-
-    val writeIsInProgress =
-        !showWriteError &&
-                (manualWritePressed || manualWriteHoldProgress > 0f)
-
-    val displayedManualWriteProgress =
-        if (showWriteError) 0f else manualWriteHoldProgress
-
-    LaunchedEffect(hasControllers, hasEnabledEmulators, writeMode) {
-        if (!hasControllers || !hasEnabledEmulators || writeMode == WriteMode.AUTO) {
-            manualWritePressed = false
-        }
-    }
+                !manualWriteInProgress
 
     val controllerHintStyle = controllers.firstOrNull()?.let {
         ControllerDisplay.hintStyleFor(it.controller)
@@ -151,15 +145,15 @@ fun PairingScreen(
                             return@onPreviewKeyEvent true
                         }
 
+                        if (writeMode != WriteMode.MANUAL) {
+                            return@onPreviewKeyEvent true
+                        }
+
                         if (!isStartEventFromPlayer1(native, controllers)) {
                             return@onPreviewKeyEvent true
                         }
 
-                        if (!manualWritePressed) {
-                            manualWritePressed = true
-                            viewModel.beginManualWriteHold()
-                        }
-
+                        viewModel.beginManualWriteHold()
                         true
                     }
 
@@ -168,11 +162,14 @@ fun PairingScreen(
                             return@onPreviewKeyEvent true
                         }
 
+                        if (writeMode != WriteMode.MANUAL) {
+                            return@onPreviewKeyEvent true
+                        }
+
                         if (!isStartEventFromPlayer1(native, controllers)) {
                             return@onPreviewKeyEvent true
                         }
 
-                        manualWritePressed = false
                         viewModel.cancelManualWriteHold()
                         true
                     }
@@ -245,9 +242,9 @@ fun PairingScreen(
 
                         else -> {
                             WriteStatusIndicator(
-                                progress = displayedManualWriteProgress,
-                                writing = writeIsInProgress,
-                                completed = isCurrentConfigWritten,
+                                progress = manualWriteProgress,
+                                writing = manualWriteInProgress,
+                                completed = manualWriteCompleted,
                                 controllerHintStyle = controllerHintStyle,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -258,12 +255,12 @@ fun PairingScreen(
                 }
             }
 
-
             ActionHintBar(
                 hints = hints,
                 controllerHintStyle = controllerHintStyle
             )
         }
+
         WriteErrorBanner(
             result = lastWriteResult,
             visible = showWriteError,

@@ -29,6 +29,7 @@ class PairingWriteCoordinator(
 ) {
     private var autoWriteJob: Job? = null
     private var lastWrittenSnapshot: WriteSnapshot? = null
+    private var lastObservedSnapshot: WriteSnapshot? = null
 
     private val manualWriteHandler = DefaultManualWriteHandler(scope)
 
@@ -40,8 +41,7 @@ class PairingWriteCoordinator(
 
     private var manualWriteConsumedUntilRelease = false
 
-    val manualWriteHoldProgress: StateFlow<Float> = manualWriteHandler.progress
-    val showSuccessFlash: StateFlow<Boolean> = manualWriteHandler.showSuccessFlash
+    val manualWriteUiState: StateFlow<ManualWriteUiState> = manualWriteHandler.uiState
 
     fun onStateChanged(
         writeMode: WriteMode,
@@ -52,6 +52,20 @@ class PairingWriteCoordinator(
             controllers = controllers,
             enabledEmulators = enabledEmulators
         )
+
+        val observedSnapshotChanged = snapshot != lastObservedSnapshot
+        lastObservedSnapshot = snapshot
+
+        if (observedSnapshotChanged) {
+            manualWriteConsumedUntilRelease = false
+            manualWriteHandler.reset()
+            _lastWriteResult.value = null
+        }
+
+        if (writeMode == WriteMode.AUTO) {
+            manualWriteConsumedUntilRelease = false
+            manualWriteHandler.reset()
+        }
 
         updateWrittenState(snapshot)
         cancelPendingAutoWrite(reason = "state_changed")
@@ -95,13 +109,12 @@ class PairingWriteCoordinator(
         if (snapshot == lastWrittenSnapshot) {
             AppLogger.d(LogTags.PAIRING, "manual write skipped | already up to date")
             updateWrittenState(snapshot)
+            manualWriteHandler.markSuccess()
             manualWriteConsumedUntilRelease = true
             return
         }
 
-        manualWriteConsumedUntilRelease = true
-
-        manualWriteHandler.start {
+        val started = manualWriteHandler.start {
             cancelPendingAutoWrite(reason = "manual_write")
 
             val result = write(snapshot)
@@ -112,6 +125,7 @@ class PairingWriteCoordinator(
                     lastWrittenSnapshot = snapshot
                     updateWrittenState(snapshot)
                     AppLogger.d(LogTags.PAIRING, "manual write success | snapshot updated")
+                    true
                 }
 
                 is WriteResult.Failure -> {
@@ -119,6 +133,7 @@ class PairingWriteCoordinator(
                         LogTags.PAIRING,
                         "manual write failed | emulator=${result.emulatorId} | reason=${result.reason}"
                     )
+                    false
                 }
 
                 is WriteResult.PartialFailure -> {
@@ -126,8 +141,13 @@ class PairingWriteCoordinator(
                         LogTags.PAIRING,
                         "manual write partial failure | fail_count=${result.failures.size} | snapshot NOT updated"
                     )
+                    false
                 }
             }
+        }
+
+        if (started) {
+            manualWriteConsumedUntilRelease = true
         }
     }
 
@@ -139,7 +159,7 @@ class PairingWriteCoordinator(
     fun cancelAll() {
         manualWriteConsumedUntilRelease = false
         cancelPendingAutoWrite(reason = "cancel_all")
-        manualWriteHandler.cancel()
+        manualWriteHandler.reset()
     }
 
     private fun updateWrittenState(snapshot: WriteSnapshot) {

@@ -4,9 +4,10 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface ManualWriteHandler {
 
-    val progress: StateFlow<Float>
-    val showSuccessFlash: StateFlow<Boolean>
+    val uiState: StateFlow<ManualWriteUiState>
 
-    fun start(onCompleted: suspend () -> Unit)
+    fun start(onCompleted: suspend () -> Boolean): Boolean
     fun cancel()
+    fun reset()
+    fun markSuccess()
 }

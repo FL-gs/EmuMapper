@@ -75,8 +75,8 @@ class PairingEngine(
     private val _writeMode = MutableStateFlow(WriteMode.MANUAL)
     val writeMode: StateFlow<WriteMode> = _writeMode.asStateFlow()
 
-    val manualWriteHoldProgress: StateFlow<Float> = writeCoordinator.manualWriteHoldProgress
-    val showSuccessFlash: StateFlow<Boolean> = writeCoordinator.showSuccessFlash
+    val manualWriteUiState: StateFlow<ManualWriteUiState> =
+        writeCoordinator.manualWriteUiState
 
     init {
         scope.launch {

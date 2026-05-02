@@ -8,9 +8,8 @@ class PairingViewModel(
 ) : ViewModel() {
     val lastWriteResult = pairingEngine.lastWriteResult
     val controllers = pairingEngine.visibleControllerUis
-    val manualWriteHoldProgress = pairingEngine.manualWriteHoldProgress
+    val manualWriteUiState = pairingEngine.manualWriteUiState
     val isCurrentConfigWritten = pairingEngine.isCurrentConfigWritten
-    val showSuccessFlash = pairingEngine.showSuccessFlash
     val writeMode = pairingEngine.writeMode
 
     fun beginManualWriteHold() {
