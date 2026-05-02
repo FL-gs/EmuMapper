@@ -57,7 +57,10 @@ class VisibleControllerUiTracker {
     fun buildVisibleControllerUis(
         controllers: List<ControllerInfo>
     ): List<VisibleControllerUi> {
-        if (controllers.isEmpty()) return emptyList()
+        if (controllers.isEmpty()) {
+            clearExternalUiState()
+            return emptyList()
+        }
 
         val externalControllers = controllers.filter { !it.isInternal }
         val internalControllers = controllers.filter { it.isInternal }
@@ -65,8 +68,16 @@ class VisibleControllerUiTracker {
         return if (externalControllers.isNotEmpty()) {
             buildExternalVisibleControllerUis(externalControllers)
         } else {
+            clearExternalUiState()
             buildInternalVisibleControllerUis(internalControllers)
         }
+    }
+
+    private fun clearExternalUiState() {
+        externalUiKeyByDeviceId.clear()
+        externalUiOrder.clear()
+        recentDeviceEvents.clear()
+        nextExternalUiKey = 0L
     }
 
     private fun buildExternalVisibleControllerUis(
