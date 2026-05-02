@@ -13,6 +13,7 @@ private val LightColorScheme = lightColorScheme(
     surfaceVariant = Neutral300, // couleur du background des bouton controllers
     primary = Primary500,
     secondary = Secondary500,
+    tertiary = tertiary500,
     onSurface = Neutral900, // couleur du texte
     onSurfaceVariant = Neutral800, // couleur du texte dans les bouton
     outline = Neutral700, // couleur des bordures

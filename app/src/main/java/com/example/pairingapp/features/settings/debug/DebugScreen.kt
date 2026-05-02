@@ -212,7 +212,7 @@ fun DebugScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Want to report a bug? suggest a QoL ? Contact me on Discord -> @Papayou",
+                text = "Want to report a bug? Contact me on Discord -> @fl.gs",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center

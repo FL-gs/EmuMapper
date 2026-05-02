@@ -146,7 +146,6 @@ fun InternalControllersSetupScreen(
                     horizontal = 24.dp,
                     vertical = 64.dp
                 )
-                .border(2.dp, color = Color.Red)
         ) {
             Column(
                 modifier = Modifier

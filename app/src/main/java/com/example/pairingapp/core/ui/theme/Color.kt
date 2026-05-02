@@ -15,6 +15,8 @@ val Primary800 = Color(0xFF1B6498)
 val Primary900 = Color(0xFF194666)
 val Primary950 = Color(0xFF132939)
 
+val tertiary500 = Color(0xFF673AB7)
+
 // Secondary
 val Secondary500 = Color(0xFF07D9D6)
 
