@@ -1,7 +1,7 @@
 package com.example.pairingapp.data.ini.eden
 
 import com.example.pairingapp.core.input.ControllerInfo
-import com.example.pairingapp.core.input.uniqueKey
+import com.example.pairingapp.core.input.deduplicationKey
 
 object EdenControlsPatcher {
 
@@ -106,11 +106,11 @@ object EdenControlsPatcher {
         edenDevices: List<EdenPortEntry>
     ): String {
         val (entries, keyIndex) = parseEntries(original)
-        val edenMap = edenDevices.associateBy { it.controller.uniqueKey() }
+        val edenMap = edenDevices.associateBy { it.controller.deduplicationKey() }
 
         for (playerIndex in 0..9) {
             val controller = controllers.getOrNull(playerIndex)
-            val eden = controller?.let { edenMap[it.uniqueKey()] }
+            val eden = controller?.let { edenMap[it.deduplicationKey()] }
 
             val connected = (controller != null && eden != null)
 
@@ -158,7 +158,7 @@ object EdenControlsPatcher {
 
         // Comportement conservé: player_8 reprend la config de player_0
         val p0 = controllers.getOrNull(0)
-        val eden0 = p0?.let { edenMap[it.uniqueKey()] }
+        val eden0 = p0?.let { edenMap[it.deduplicationKey()] }
 
         if (p0 != null && eden0 != null) {
             val display = eden0.display

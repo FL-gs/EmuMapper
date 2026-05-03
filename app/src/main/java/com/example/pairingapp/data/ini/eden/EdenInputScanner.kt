@@ -4,8 +4,7 @@ import android.view.InputDevice
 import com.example.pairingapp.core.input.ControllerInfo
 import com.example.pairingapp.core.input.isGamepadDevice
 import com.example.pairingapp.core.input.toControllerInfo
-import com.example.pairingapp.core.input.uniqueKey
-import android.util.Log
+import com.example.pairingapp.core.input.deduplicationKey
 import com.example.pairingapp.core.utils.AppLogger
 
 data class EdenPortEntry(
@@ -23,7 +22,7 @@ object EdenInputScanner {
      * - scan des InputDevice Android
      * - filtre gamepad / joystick
      * - conversion en ControllerInfo
-     * - déduplication via uniqueKey()
+     * - déduplication via deduplicationKey()
      * - attribution d'un port (0..n-1)
      * - génération guid + display
      */
@@ -33,7 +32,7 @@ object EdenInputScanner {
             .mapNotNull { deviceId -> InputDevice.getDevice(deviceId) }
             .filter { device -> device.isGamepadDevice() }
             .map { device -> device.toControllerInfo() }
-            .distinctBy { controller -> controller.uniqueKey() }
+            .distinctBy { controller -> controller.deduplicationKey() }
 
         AppLogger.d("MYAPP_EDEN", "scan start")
 

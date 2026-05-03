@@ -4,7 +4,7 @@ import android.view.InputDevice
 import com.example.pairingapp.core.input.ControllerInfo
 import com.example.pairingapp.core.input.isGamepadDevice
 import com.example.pairingapp.core.input.toControllerInfo
-import com.example.pairingapp.core.input.uniqueKey
+import com.example.pairingapp.core.input.deduplicationKey
 
 class DefaultControllerScanner : ControllerScanner {
 
@@ -14,7 +14,7 @@ class DefaultControllerScanner : ControllerScanner {
             .mapNotNull(InputDevice::getDevice)
             .filter { it.isGamepadDevice() }
             .map { it.toControllerInfo() }
-            .distinctBy { it.uniqueKey() }
+            .distinctBy { it.deduplicationKey() }
             .toList()
     }
 }

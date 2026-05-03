@@ -69,13 +69,13 @@ class DefaultManualWriteHandler(
         _uiState.value = ManualWriteUiState.Idle
     }
 
-    override fun reset() {
+    override fun resetToIdle() {
         job?.cancel()
         job = null
         _uiState.value = ManualWriteUiState.Idle
     }
 
-    override fun markSuccess() {
+    override fun showSuccess() {
         job?.cancel()
         job = null
         _uiState.value = ManualWriteUiState.Success

@@ -51,7 +51,7 @@ fun InputDevice.toControllerInfo(isInternal: Boolean = false): ControllerInfo {
  * 2. descriptor (stable dans la plupart des cas)
  * 3. deviceId fallback
  */
-fun ControllerInfo.uniqueKey(): String {
+fun ControllerInfo.deduplicationKey(): String {
     return controllerNumber?.let { "num:$it" }
         ?: descriptor
         ?: "id:$deviceId"

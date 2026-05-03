@@ -39,7 +39,7 @@ class PairingWriteCoordinator(
     private val _lastWriteResult = MutableStateFlow<WriteResult?>(null)
     val lastWriteResult: StateFlow<WriteResult?> = _lastWriteResult.asStateFlow()
 
-    private var manualWriteConsumedUntilRelease = false
+    private var startConsumed = false
 
     val manualWriteUiState: StateFlow<ManualWriteUiState> = manualWriteHandler.uiState
 
@@ -57,14 +57,14 @@ class PairingWriteCoordinator(
         lastObservedSnapshot = snapshot
 
         if (observedSnapshotChanged) {
-            manualWriteConsumedUntilRelease = false
-            manualWriteHandler.reset()
+            startConsumed = false
+            manualWriteHandler.resetToIdle()
             _lastWriteResult.value = null
         }
 
         if (writeMode == WriteMode.AUTO) {
-            manualWriteConsumedUntilRelease = false
-            manualWriteHandler.reset()
+            startConsumed = false
+            manualWriteHandler.resetToIdle()
         }
 
         updateWrittenState(snapshot)
@@ -99,7 +99,7 @@ class PairingWriteCoordinator(
     ) {
         if (writeMode == WriteMode.AUTO) return
         if (controllers.isEmpty()) return
-        if (manualWriteConsumedUntilRelease) return
+        if (startConsumed) return
 
         val snapshot = WriteSnapshot(
             controllers = controllers,
@@ -109,8 +109,8 @@ class PairingWriteCoordinator(
         if (snapshot == lastWrittenSnapshot) {
             AppLogger.d(LogTags.PAIRING, "manual write skipped | already up to date")
             updateWrittenState(snapshot)
-            manualWriteHandler.markSuccess()
-            manualWriteConsumedUntilRelease = true
+            manualWriteHandler.showSuccess()
+            startConsumed = true
             return
         }
 
@@ -147,19 +147,19 @@ class PairingWriteCoordinator(
         }
 
         if (started) {
-            manualWriteConsumedUntilRelease = true
+            startConsumed = true
         }
     }
 
     fun cancelManualWriteHold() {
-        manualWriteConsumedUntilRelease = false
+        startConsumed = false
         manualWriteHandler.cancel()
     }
 
     fun cancelAll() {
-        manualWriteConsumedUntilRelease = false
+        startConsumed = false
         cancelPendingAutoWrite(reason = "cancel_all")
-        manualWriteHandler.reset()
+        manualWriteHandler.resetToIdle()
     }
 
     private fun updateWrittenState(snapshot: WriteSnapshot) {

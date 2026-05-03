@@ -8,6 +8,6 @@ interface ManualWriteHandler {
 
     fun start(onCompleted: suspend () -> Boolean): Boolean
     fun cancel()
-    fun reset()
-    fun markSuccess()
+    fun resetToIdle()
+    fun showSuccess()
 }

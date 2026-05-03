@@ -4,7 +4,7 @@ import com.example.pairingapp.core.domain.controllers.ControllerType
 import com.example.pairingapp.core.domain.controllers.DetectedController
 import com.example.pairingapp.core.input.ControllerInfo
 import com.example.pairingapp.core.input.toLogLine
-import com.example.pairingapp.core.input.uniqueKey
+import com.example.pairingapp.core.input.deduplicationKey
 import com.example.pairingapp.core.utils.AppLogger
 import com.example.pairingapp.core.utils.LogTags
 
@@ -25,7 +25,7 @@ class DefaultVisibleControllersResolver : VisibleControllersResolver {
             val type = if (isInternal) "internal" else "external"
             val line = info.toLogLine()
 
-            if (target.any { it.uniqueKey() == info.uniqueKey() }) {
+            if (target.any { it.deduplicationKey() == info.deduplicationKey() }) {
                 AppLogger.d(LogTags.PAIRING, "pairing skip | duplicate $type | $line")
                 return@forEach
             }

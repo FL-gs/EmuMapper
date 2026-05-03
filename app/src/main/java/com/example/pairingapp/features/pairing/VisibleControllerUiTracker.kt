@@ -2,7 +2,7 @@ package com.example.pairingapp.core.pairing
 
 import android.os.SystemClock
 import com.example.pairingapp.core.input.ControllerInfo
-import com.example.pairingapp.core.input.uniqueKey
+import com.example.pairingapp.core.input.deduplicationKey
 import com.example.pairingapp.core.utils.AppLogger
 import com.example.pairingapp.core.utils.LogTags
 import com.example.pairingapp.features.pairing.VisibleControllerUi
@@ -150,7 +150,7 @@ class VisibleControllerUiTracker {
 
         return controllers.map { info ->
             VisibleControllerUi(
-                uiKey = "internal-${info.uniqueKey()}",
+                uiKey = "internal-${info.deduplicationKey()}",
                 controller = info
             )
         }
