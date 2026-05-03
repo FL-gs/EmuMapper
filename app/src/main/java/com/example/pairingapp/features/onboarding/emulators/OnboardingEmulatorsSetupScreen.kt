@@ -40,6 +40,7 @@ import com.example.pairingapp.R
 import com.example.pairingapp.core.input.PadKey
 import com.example.pairingapp.core.input.mapKeyEvent
 import com.example.pairingapp.core.ui.components.ActionButton
+import com.example.pairingapp.core.ui.components.AppConfirmDialog
 import com.example.pairingapp.data.emulators.EmulatorDef
 import com.example.pairingapp.data.emulators.EmulatorDetector
 import com.example.pairingapp.features.settings.SettingsViewModel
@@ -79,6 +80,18 @@ fun OnboardingEmulatorsSetupScreen(
     val finishIndex = installed.size
     val backIndex = installed.size + 1
 
+    var showSkipEmulatorsDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    fun goNext() {
+        if (enabledEmulators.isEmpty()) {
+            showSkipEmulatorsDialog = true
+        } else {
+            onDone()
+        }
+    }
+
     LaunchedEffect(installed) {
         focusedIndex = focusedIndex.coerceIn(0, backIndex)
     }
@@ -109,7 +122,7 @@ fun OnboardingEmulatorsSetupScreen(
             .focusRequester(rootFocusRequester)
             .focusable()
             .onPreviewKeyEvent { event ->
-                if (uiState.showRetroArchDialog) {
+                if (uiState.showRetroArchDialog || showSkipEmulatorsDialog) {
                     return@onPreviewKeyEvent false
                 }
 
@@ -159,7 +172,7 @@ fun OnboardingEmulatorsSetupScreen(
 
                         when {
                             emulator != null -> toggleEmulator(emulator.id)
-                            focusedIndex == finishIndex -> onDone()
+                            focusedIndex == finishIndex -> goNext()
                             focusedIndex == backIndex -> onBack()
                         }
 
@@ -249,7 +262,9 @@ fun OnboardingEmulatorsSetupScreen(
             active = true,
             focusRequester = finishFocusRequester,
             focused = focusedIndex == finishIndex,
-            onClick = onDone,
+            onClick = {
+                goNext()
+            },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 24.dp, bottom = 24.dp)
@@ -288,6 +303,22 @@ fun OnboardingEmulatorsSetupScreen(
                 ) {
                     Text(stringResource(R.string.cancel))
                 }
+            }
+        )
+    }
+
+    if (showSkipEmulatorsDialog) {
+        AppConfirmDialog(
+            title = stringResource(R.string.skip_emulators_title),
+            message = stringResource(R.string.skip_emulators_message),
+            confirmText = stringResource(R.string.continue_without_emulators),
+            dismissText = stringResource(R.string.cancel),
+            onConfirm = {
+                showSkipEmulatorsDialog = false
+                onDone()
+            },
+            onDismiss = {
+                showSkipEmulatorsDialog = false
             }
         )
     }

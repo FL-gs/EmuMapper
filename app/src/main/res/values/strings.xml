@@ -78,4 +78,13 @@
     <string name="onboarding_emulators_explanation">PairingApp will only write controller configs for enabled emulators.</string>
     <string name="onboarding_emulators_settings_hint">This selection can be changed later in settings.</string>
     <string name="finish">Finish</string>
+
+    <string name="skip_internal_controller_title">Continue without an internal profile?</string>
+    <string name="skip_internal_controller_message">No internal profile has been selected. The console may be detected as an external controller until a profile is configured in settings.</string>
+    <string name="continue_without_profile">Continue without profile</string>
+
+    <string name="skip_emulators_title">Continue without enabled emulators?</string>
+    <string name="skip_emulators_message">No emulator has been enabled. Emulator configuration files will not be updated until at least one emulator is enabled in settings.</string>
+    <string name="continue_without_emulators">Continue without emulators</string>
+
 </resources>

@@ -29,7 +29,6 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pairingapp.R
@@ -39,6 +38,9 @@ import com.example.pairingapp.core.input.mapKeyEvent
 import com.example.pairingapp.core.ui.components.ActionButton
 import com.example.pairingapp.features.components.DevicePickerViewModel
 import com.example.pairingapp.features.components.SelectionDialog
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import com.example.pairingapp.core.ui.components.AppConfirmDialog
 
 @Composable
 fun InternalControllersSetupScreen(
@@ -51,7 +53,7 @@ fun InternalControllersSetupScreen(
     val nextLabel = stringResource(R.string.next)
     val explanationText = stringResource(R.string.internal_controllers_explanation)
     val explanationText2 = stringResource(R.string.internal_controllers_explanation2)
-    val onboarding_hint = stringResource(R.string.onboarding_internal_controller_settings_hint)
+    val onboardinghint = stringResource(R.string.onboarding_internal_controller_settings_hint)
 
     val FOCUS_CONTROLLER = 0
     val FOCUS_NEXT = 1
@@ -70,13 +72,26 @@ fun InternalControllersSetupScreen(
     var focusedIndex by rememberSaveable { mutableIntStateOf(FOCUS_CONTROLLER) }
     var internalController by rememberSaveable { mutableStateOf(initialInternalController) }
 
+    var showSkipProfileDialog by rememberSaveable { mutableStateOf(false) }
+
+    fun goNext() {
+        if (internalController == null) {
+            showSkipProfileDialog = true
+        } else {
+            onDone(internalController)
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .focusRequester(rootFocusRequester)
             .focusable()
             .onPreviewKeyEvent { event ->
-                if (showDialog) return@onPreviewKeyEvent false
+                if (showDialog || showSkipProfileDialog) {
+                    return@onPreviewKeyEvent false
+                }
+
                 if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
 
                 when (mapKeyEvent(event.nativeKeyEvent)) {
@@ -98,7 +113,7 @@ fun InternalControllersSetupScreen(
                             }
 
                             FOCUS_NEXT -> {
-                                onDone(internalController)
+                                goNext()
                                 true
                             }
 
@@ -181,7 +196,7 @@ fun InternalControllersSetupScreen(
                         }
                     )
                     Text(
-                        text = onboarding_hint,
+                        text = onboardinghint,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
                     )
@@ -204,6 +219,22 @@ fun InternalControllersSetupScreen(
             )
         }
 
+        if (showSkipProfileDialog) {
+            AppConfirmDialog(
+                title = stringResource(R.string.skip_internal_controller_title),
+                message = stringResource(R.string.skip_internal_controller_message),
+                confirmText = stringResource(R.string.continue_without_profile),
+                dismissText = stringResource(R.string.cancel),
+                onConfirm = {
+                    showSkipProfileDialog = false
+                    onDone(null)
+                },
+                onDismiss = {
+                    showSkipProfileDialog = false
+                }
+            )
+        }
+
         ActionButton(
             text = nextLabel,
             selected = focusedIndex == FOCUS_NEXT,
@@ -211,7 +242,7 @@ fun InternalControllersSetupScreen(
             focusRequester = focusRequesters[FOCUS_NEXT],
             focused = focusedIndex == FOCUS_NEXT,
             onClick = {
-                onDone(internalController)
+                goNext()
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)

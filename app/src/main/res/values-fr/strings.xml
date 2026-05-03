@@ -79,4 +79,12 @@
     <string name="onboarding_emulators_explanation">Les émulateurs activés seront ajustés selon les manettes connectées.</string>
     <string name="onboarding_emulators_settings_hint">Cette sélection pourra être modifiée plus tard dans les paramètres.</string>
     <string name="finish">Terminer</string>
+
+    <string name="skip_internal_controller_title">Continuer sans profil interne ?</string>
+    <string name="skip_internal_controller_message">Aucun profil interne n’a été sélectionné. La console pourrait être détectée comme une manette externe jusqu’à ce qu’un profil soit configuré dans les paramètres.</string>
+    <string name="continue_without_profile">Continuer sans profil</string>
+
+    <string name="skip_emulators_title">Continuer sans émulateur activé ?</string>
+    <string name="skip_emulators_message">Aucun émulateur n’a été activé. Les fichiers de configuration des émulateurs ne seront pas modifiés tant qu’aucun émulateur n’est activé dans les paramètres.</string>
+    <string name="continue_without_emulators">Continuer sans émulateur</string>
 </resources>

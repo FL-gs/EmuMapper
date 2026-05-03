@@ -32,7 +32,7 @@ val AppTypography = Typography(
         fontFamily = Inter,
         fontWeight = FontWeight.SemiBold,
         fontSize = 20.sp,
-        lineHeight = 52.sp
+        lineHeight = 28.sp
     ),
     displayMedium = TextStyle(
         fontFamily = Inter,
