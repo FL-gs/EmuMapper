@@ -5,16 +5,14 @@
     <string name="accept">Accepter</string>
     <string name="next">Suivant</string>
 
-    <string name="internal_controllers_explanation">
-Sélectionnez les profils des manettes internes de votre console afin de les distinguer des manettes externes.
+    <string name="internal_controllers_explanation">Sélection du profil de manette interne de la console afin de le distinguer des manettes externes.</string>
+    <string name="internal_controllers_explanation2">Il est conseillé d’éteindre les manettes externes pour faciliter la sélection du bon profil.</string>
+    <string name="onboarding_internal_controller_settings_hint">Ce profil pourra être modifié plus tard dans les paramètres.</string>
 
-\nÉteignez les manettes externes avant la configuration.
-\nVous n’avez pas besoin de configurer les deux profils et vous pourrez modifier cela plus tard dans les paramètres de l’application.
-</string>
-
-    <string name="internal_controllers_title">Manettes intégrées</string>
+    <string name="internal_controllers_title">Manette intégrée</string>
     <string name="no_controllers_detected">Aucune manette détectée</string>
     <string name="onboarding_choose_next_hint">A : Sélectionner | START : Suivant</string>
+
 
     <string name="settings_sidebar_title">Paramètres</string>
     <string name="settings_category_App">Paramètres de l’application</string>
@@ -78,6 +76,7 @@ Sélectionnez les profils des manettes internes de votre console afin de les dis
     <string name="auto_pairing_service_text">La détection des manettes et l’écriture automatique restent actives en arrière-plan.</string>
 
     <string name="onboarding_emulators_title">Emulateurs</string>
-    <string name="onboarding_emulators_explanation">PairingApp écrira les configurations de manettes uniquement pour les émulateurs activés.\nTu peux modifier ce choix plus tard dans les paramètres.</string>
+    <string name="onboarding_emulators_explanation">Les émulateurs activés seront ajustés selon les manettes connectées.</string>
+    <string name="onboarding_emulators_settings_hint">Cette sélection pourra être modifiée plus tard dans les paramètres.</string>
     <string name="finish">Terminer</string>
 </resources>

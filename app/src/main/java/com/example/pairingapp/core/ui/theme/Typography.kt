@@ -18,8 +18,8 @@ val AppTypography = Typography(
     headlineLarge = TextStyle(
         fontFamily = Inter,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 44.sp,
-        lineHeight = 52.sp
+        fontSize = 34.sp,
+        lineHeight = 34.sp
     ),
     titleLarge = TextStyle(
         fontFamily = Inter,

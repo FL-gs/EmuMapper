@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
@@ -183,7 +182,7 @@ fun OnboardingEmulatorsSetupScreen(
                 .fillMaxWidth()
                 .padding(
                     horizontal = 24.dp,
-                    vertical = 64.dp
+                    vertical = 88.dp
                 )
         ) {
             Column(
@@ -193,31 +192,40 @@ fun OnboardingEmulatorsSetupScreen(
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.Start
                 ) {
                     Text(
                         text = stringResource(R.string.onboarding_emulators_title),
                         style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center
+                        color = MaterialTheme.colorScheme.primary,
                     )
 
                     Text(
                         text = stringResource(R.string.onboarding_emulators_explanation),
                         modifier = Modifier.fillMaxWidth(),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
-                        textAlign = TextAlign.Start
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
+
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(64.dp))
 
                 EmulatorToggleList(
                     installed = installed,
                     enabledEmulators = enabledEmulators,
                     focusedIndex = focusedIndex,
+                )
+
+                Spacer(modifier = Modifier.height(64.dp))
+
+                Text(
+                    text = stringResource(R.string.onboarding_emulators_settings_hint),
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                    textAlign = TextAlign.Center
                 )
             }
         }

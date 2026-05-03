@@ -30,7 +30,6 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pairingapp.R
@@ -38,7 +37,6 @@ import com.example.pairingapp.core.input.PadKey
 import com.example.pairingapp.core.input.internalControllerLabel
 import com.example.pairingapp.core.input.mapKeyEvent
 import com.example.pairingapp.core.ui.components.ActionButton
-import com.example.pairingapp.core.ui.theme.AppTheme
 import com.example.pairingapp.features.components.DevicePickerViewModel
 import com.example.pairingapp.features.components.SelectionDialog
 
@@ -52,6 +50,8 @@ fun InternalControllersSetupScreen(
     val title = stringResource(R.string.internal_controllers_title)
     val nextLabel = stringResource(R.string.next)
     val explanationText = stringResource(R.string.internal_controllers_explanation)
+    val explanationText2 = stringResource(R.string.internal_controllers_explanation2)
+    val onboarding_hint = stringResource(R.string.onboarding_internal_controller_settings_hint)
 
     val FOCUS_CONTROLLER = 0
     val FOCUS_NEXT = 1
@@ -117,8 +117,8 @@ fun InternalControllersSetupScreen(
                 .fillMaxWidth()
                 .padding(
                     horizontal = 24.dp,
-                    vertical = 64.dp
-                )
+                    vertical = 88.dp
+                ),
         ) {
             Column(
                 modifier = Modifier
@@ -129,25 +129,32 @@ fun InternalControllersSetupScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.Start
                 ) {
                     Text(
+                        modifier = Modifier.fillMaxWidth(),
                         text = title,
                         style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center
+                        color = MaterialTheme.colorScheme.primary,
                     )
 
                     Text(
+                        modifier = Modifier.fillMaxWidth(),
                         text = explanationText,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
-                        textAlign = TextAlign.Start
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = explanationText2,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(64.dp))
 
                 Column(
                     modifier = Modifier
@@ -172,6 +179,11 @@ fun InternalControllersSetupScreen(
                             focusedIndex = FOCUS_CONTROLLER
                             pickerViewModel.open(noneLabel)
                         }
+                    )
+                    Text(
+                        text = onboarding_hint,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
                     )
                 }
             }
@@ -205,28 +217,6 @@ fun InternalControllersSetupScreen(
                 .align(Alignment.BottomEnd)
                 .padding(end = 24.dp, bottom = 24.dp)
                 .widthIn(min = 120.dp, max = 160.dp)
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 1280, heightDp = 720)
-@Composable
-fun InternalControllersSetupScreenPreview() {
-    AppTheme(darkTheme = false) {
-        InternalControllersSetupScreen(
-            initialInternalController = "odin2 portal",
-            onDone = { }
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 700, heightDp = 900)
-@Composable
-fun InternalControllersSetupScreenPreviewCompact() {
-    AppTheme(darkTheme = false) {
-        InternalControllersSetupScreen(
-            initialInternalController = "odin2 portal",
-            onDone = { }
         )
     }
 }
