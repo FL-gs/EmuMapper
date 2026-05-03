@@ -5,7 +5,6 @@ import com.example.pairingapp.core.input.ControllerInfo
 interface ControllerClassifier {
     fun classify(
         controllers: List<ControllerInfo>,
-        internalController1: String?,
-        internalController2: String?
+        internalController: String?
     ): List<DetectedController>
 }

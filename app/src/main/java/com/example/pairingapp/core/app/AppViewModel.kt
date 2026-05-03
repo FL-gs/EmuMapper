@@ -38,9 +38,9 @@ class AppViewModel(
         }
     }
 
-    fun setInternalControllers(i1: String?, i2: String?) {
+    fun setInternalController(value: String?) {
         viewModelScope.launch {
-            repo.setInternalControllers(i1, i2)
+            repo.setInternalController(value)
         }
     }
 

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,9 +12,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pairingapp.core.app.AppViewModel
 import com.example.pairingapp.core.app.AppViewModelFactory
@@ -21,9 +22,8 @@ import com.example.pairingapp.core.app.appGraph
 import com.example.pairingapp.core.navigation.AppNavHost
 import com.example.pairingapp.core.pairing.AutoPairingService
 import com.example.pairingapp.core.settings.WriteMode
-import com.example.pairingapp.core.ui.theme.AppTheme
-import androidx.compose.runtime.CompositionLocalProvider
 import com.example.pairingapp.core.settings.localized
+import com.example.pairingapp.core.ui.theme.AppTheme
 
 @Composable
 fun App() {
@@ -96,9 +96,8 @@ fun App() {
                     writeMode = s.writeMode,
                     onSetWriteMode = viewModel::setWriteMode,
                     onboardingDone = s.onboardingDone,
-                    internalController1 = s.internalController1,
-                    internalController2 = s.internalController2,
-                    onSetInternalControllers = viewModel::setInternalControllers,
+                    internalController = s.internalController,
+                    onSetInternalController = viewModel::setInternalController,
                     debugLogs = s.debugLogs,
                     onSetDebugLogs = viewModel::setDebugLogs,
                     onClearLogs = viewModel::clearLogs,

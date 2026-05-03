@@ -10,8 +10,8 @@ object SettingsKeys {
     val ENABLED_EMULATORS = stringSetPreferencesKey("enabled_emulators")
 
     val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
-    val INTERNAL_CONTROLLER_1 = stringPreferencesKey("internal_controller_1")
-    val INTERNAL_CONTROLLER_2 = stringPreferencesKey("internal_controller_2")
+
+    val INTERNAL_CONTROLLER = stringPreferencesKey("internal_controller")
 
     val WRITE_MODE = stringPreferencesKey("write_mode")
 

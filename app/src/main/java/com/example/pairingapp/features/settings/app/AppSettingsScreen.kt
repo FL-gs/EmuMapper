@@ -1,4 +1,4 @@
-﻿package com.example.pairingapp.features.settings.app
+package com.example.pairingapp.features.settings.app
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
@@ -27,23 +27,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pairingapp.R
-import com.example.pairingapp.core.input.availableInternalControllerChoices
 import com.example.pairingapp.core.input.internalControllerLabel
 import com.example.pairingapp.core.settings.AppLanguage
 import com.example.pairingapp.core.settings.WriteMode
-import com.example.pairingapp.core.ui.components.AppSettingsFocusZone
 import com.example.pairingapp.core.ui.components.ActionButton
+import com.example.pairingapp.core.ui.components.AppSettingsFocusZone
 import com.example.pairingapp.core.ui.components.HintBarState
 import com.example.pairingapp.core.ui.components.SectionDivider
-import com.example.pairingapp.features.components.SelectionDialog
 import com.example.pairingapp.features.components.DevicePickerViewModel
+import com.example.pairingapp.features.components.SelectionDialog
 import com.example.pairingapp.features.settings.components.SettingRow
 
 private enum class ThemeOption(@get:StringRes val labelRes: Int) {
     LIGHT(R.string.theme_light),
     DARK(R.string.theme_dark)
 }
-
 
 @Composable
 fun AppSettingsScreen(
@@ -55,25 +53,21 @@ fun AppSettingsScreen(
     onSetLanguage: (AppLanguage) -> Unit,
     writeMode: WriteMode,
     onSetWriteMode: (WriteMode) -> Unit,
-    internalController1: String?,
-    internalController2: String?,
-    onSetInternalControllers: (String?, String?) -> Unit,
+    internalController: String?,
+    onSetInternalController: (String?) -> Unit,
     onHintStateChanged: (HintBarState) -> Unit
 ) {
     val noneLabel = stringResource(R.string.none)
-    val internalController1Label = stringResource(R.string.internal_controller_1)
-    val internalController2Label = stringResource(R.string.internal_controller_2)
+    val internalControllerDialogTitle = stringResource(R.string.internal_controllers_title)
     val previewAlpha = if (active) 1f else 0.35f
 
-    val focusRequesters = remember { List(5) { FocusRequester() } }
+    val focusRequesters = remember { List(4) { FocusRequester() } }
 
     val pickerViewModel: DevicePickerViewModel = viewModel()
     val showDialog by pickerViewModel.showDialog.collectAsState()
     val choices by pickerViewModel.choices.collectAsState()
 
-    var selectedControllerSlot by rememberSaveable { mutableIntStateOf(0) }
     var focusedIndex by rememberSaveable { mutableIntStateOf(0) }
-
 
     LaunchedEffect(active, showDialog) {
         if (active && !showDialog) {
@@ -112,14 +106,6 @@ fun AppSettingsScreen(
     val currentThemeIndex = themes.indexOf(currentTheme).coerceAtLeast(0)
     val currentLanguageIndex = languages.indexOf(language).coerceAtLeast(0)
     val currentWriteModeIndex = writeModes.indexOf(writeMode).coerceAtLeast(0)
-
-    val dialogChoices = availableInternalControllerChoices(
-        choices = choices,
-        selectedSlot = selectedControllerSlot,
-        internal1 = internalController1,
-        internal2 = internalController2
-    )
-
     val currentWriteMode = writeModes[currentWriteModeIndex]
 
     fun selectTheme(index: Int): Boolean {
@@ -134,16 +120,14 @@ fun AppSettingsScreen(
         return true
     }
 
-
     fun selectWriteMode(index: Int): Boolean {
         if (index !in writeModes.indices) return false
         onSetWriteMode(writeModes[index])
         return true
     }
 
-    fun openControllerPicker(slot: Int) {
+    fun openControllerPicker() {
         if (!active) return
-        selectedControllerSlot = slot
         pickerViewModel.open(noneLabel)
     }
 
@@ -256,70 +240,34 @@ fun AppSettingsScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    ActionButton(
-                        text = internalControllerLabel(
-                            internalController1,
-                            choices,
-                            noneLabel
-                        ),
-                        selected = false,
-                        active = active,
-                        onFocused = {
-                            focusedIndex = 3
-                            onHintStateChanged(HintBarState.AppSettings(AppSettingsFocusZone.CONTROLLER_BUTTON))
-                        },
-                        focusRequester = focusRequesters[3],
-                        previousFocusRequester = focusRequesters[2],
-                        nextFocusRequester = focusRequesters[4],
-                        onClick = {
-                            openControllerPicker(0)
-                        }
-                    )
-
-                    ActionButton(
-                        text = internalControllerLabel(
-                            internalController2,
-                            choices,
-                            noneLabel
-                        ),
-                        selected = false,
-                        active = active,
-                        onFocused = {
-                            focusedIndex = 4
-                            onHintStateChanged(HintBarState.AppSettings(AppSettingsFocusZone.CONTROLLER_BUTTON))
-                        },
-                        focusRequester = focusRequesters[4],
-                        previousFocusRequester = focusRequesters[3],
-                        onClick = {
-                            openControllerPicker(1)
-                        }
-                    )
-                }
+                ActionButton(
+                    text = internalControllerLabel(
+                        internalController,
+                        choices,
+                        noneLabel
+                    ),
+                    selected = false,
+                    active = active,
+                    onFocused = {
+                        focusedIndex = 3
+                        onHintStateChanged(HintBarState.AppSettings(AppSettingsFocusZone.CONTROLLER_BUTTON))
+                    },
+                    focusRequester = focusRequesters[3],
+                    previousFocusRequester = focusRequesters[2],
+                    onClick = {
+                        openControllerPicker()
+                    }
+                )
             }
         }
 
         if (showDialog) {
             SelectionDialog(
-                title = if (selectedControllerSlot == 0) {
-                    internalController1Label
-                } else {
-                    internalController2Label
-                },
-                choices = dialogChoices,
-                current = if (selectedControllerSlot == 0) {
-                    internalController1
-                } else {
-                    internalController2
-                },
+                title = internalControllerDialogTitle,
+                choices = choices,
+                current = internalController,
                 onPick = { picked ->
-                    if (selectedControllerSlot == 0) {
-                        onSetInternalControllers(picked, internalController2)
-                    } else {
-                        onSetInternalControllers(internalController1, picked)
-                    }
+                    onSetInternalController(picked)
                     pickerViewModel.close()
                 },
                 onDismiss = {

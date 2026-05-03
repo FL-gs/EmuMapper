@@ -1,8 +1,8 @@
 package com.example.pairingapp.core.navigation
 
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
@@ -15,12 +15,12 @@ import com.example.pairingapp.core.settings.AppLanguage
 import com.example.pairingapp.core.settings.WriteMode
 import com.example.pairingapp.core.utils.AppLogger
 import com.example.pairingapp.core.utils.LogTags
+import com.example.pairingapp.features.onboarding.emulators.OnboardingEmulatorsSetupScreen
 import com.example.pairingapp.features.onboarding.internalcontrollers.InternalControllersSetupScreen
 import com.example.pairingapp.features.pairing.PairingScreen
 import com.example.pairingapp.features.pairing.PairingViewModel
 import com.example.pairingapp.features.pairing.PairingViewModelFactory
 import com.example.pairingapp.features.settings.SettingsHomeScreen
-import com.example.pairingapp.features.onboarding.emulators.OnboardingEmulatorsSetupScreen
 
 @Composable
 fun AppNavHost(
@@ -30,12 +30,11 @@ fun AppNavHost(
     onSetLanguage: (AppLanguage) -> Unit,
     enabledEmulators: Set<String>,
     onSetEnabledEmulators: (Set<String>) -> Unit,
-    onSetInternalControllers: (String?, String?) -> Unit,
+    onSetInternalController: (String?) -> Unit,
     writeMode: WriteMode,
     onSetWriteMode: (WriteMode) -> Unit,
     onboardingDone: Boolean,
-    internalController1: String?,
-    internalController2: String?,
+    internalController: String?,
     debugLogs: Boolean,
     onSetDebugLogs: (Boolean) -> Unit,
     onClearLogs: () -> Unit,
@@ -83,10 +82,9 @@ fun AppNavHost(
     ) {
         composable(Routes.InternalControllersSetup) {
             InternalControllersSetupScreen(
-                initialInternal1 = internalController1,
-                initialInternal2 = internalController2,
-                onDone = { i1, i2 ->
-                    onSetInternalControllers(i1, i2)
+                initialInternalController = internalController,
+                onDone = { selectedInternalController ->
+                    onSetInternalController(selectedInternalController)
                     navController.navigate(Routes.OnboardingEmulatorsSetup)
                 }
             )
@@ -133,9 +131,8 @@ fun AppNavHost(
                 onSetWriteMode = onSetWriteMode,
                 enabledEmulators = enabledEmulators,
                 onSetEnabledEmulators = onSetEnabledEmulators,
-                internalController1 = internalController1,
-                internalController2 = internalController2,
-                onSetInternalControllers = onSetInternalControllers,
+                internalController = internalController,
+                onSetInternalController = onSetInternalController,
                 debugLogs = debugLogs,
                 onSetDebugLogs = onSetDebugLogs,
                 onClearLogs = onClearLogs,

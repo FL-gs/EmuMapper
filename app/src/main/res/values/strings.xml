@@ -13,8 +13,6 @@ Select your console’s internal controller profiles so they can be distinguishe
 </string>
 
     <string name="internal_controllers_title">Built-In Controllers</string>
-    <string name="internal_controller_1">Internal controller 1</string>
-    <string name="internal_controller_2">Internal controller 2</string>
     <string name="no_controllers_detected">No controllers detected</string>
     <string name="onboarding_choose_next_hint">A: Select | START: Next</string>
 

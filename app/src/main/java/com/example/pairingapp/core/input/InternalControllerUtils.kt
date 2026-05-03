@@ -1,7 +1,7 @@
 package com.example.pairingapp.core.input
 
 /**
- * Retourne le label à afficher pour une manette interne.
+ * Retourne le label à afficher pour la manette interne.
  *
  * La clé stockée dans le DataStore est de la forme :
  *      "name|descriptor"
@@ -13,7 +13,6 @@ package com.example.pairingapp.core.input
  * on fallback sur le nom contenu dans la clé afin d'éviter d'afficher
  * "Inconnu" ou "Aucun".
  */
-
 fun internalControllerLabel(
     key: String?,
     choices: List<DeviceChoice>,
@@ -23,30 +22,4 @@ fun internalControllerLabel(
 
     return choices.firstOrNull { it.key == key }?.label
         ?: key.substringBefore("|")
-}
-
-
-/**
- * Filtre les choix disponibles pour éviter qu'une même manette soit sélectionnée
- * à la fois comme manette interne 1 et manette interne 2.
- *
- * Règles :
- * - garde toujours "Aucun" (key == null)
- * - garde toujours la valeur actuellement sélectionnée dans le slot édité
- * - exclut la valeur déjà utilisée par l'autre slot
- */
-fun availableInternalControllerChoices(
-    choices: List<DeviceChoice>,
-    selectedSlot: Int,
-    internal1: String?,
-    internal2: String?
-): List<DeviceChoice> {
-    val currentKey = if (selectedSlot == 0) internal1 else internal2
-    val excludedKey = if (selectedSlot == 0) internal2 else internal1
-
-    return choices.filter { choice ->
-        choice.key == null ||
-                choice.key == currentKey ||
-                choice.key != excludedKey
-    }
 }

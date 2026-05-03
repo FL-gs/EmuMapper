@@ -8,10 +8,9 @@ data class AppSettings(
     val language: AppLanguage = AppLanguage.SYSTEM,
     val enabledEmulators: Set<String> = emptySet(),
 
-    // Onboarding + manettes internes
+    // Onboarding + manette interne
     val onboardingDone: Boolean = false,
-    val internalController1: String? = null,
-    val internalController2: String? = null,
+    val internalController: String? = null,
 
     val writeMode: WriteMode = WriteMode.MANUAL,
 

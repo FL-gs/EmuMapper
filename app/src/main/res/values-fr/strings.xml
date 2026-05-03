@@ -13,8 +13,6 @@ Sélectionnez les profils des manettes internes de votre console afin de les dis
 </string>
 
     <string name="internal_controllers_title">Manettes intégrées</string>
-    <string name="internal_controller_1">Manette interne 1</string>
-    <string name="internal_controller_2">Manette interne 2</string>
     <string name="no_controllers_detected">Aucune manette détectée</string>
     <string name="onboarding_choose_next_hint">A : Sélectionner | START : Suivant</string>
 

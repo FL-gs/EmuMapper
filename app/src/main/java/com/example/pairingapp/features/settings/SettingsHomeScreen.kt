@@ -29,10 +29,10 @@ import com.example.pairingapp.core.settings.WriteMode
 import com.example.pairingapp.core.ui.components.HintBarState
 import com.example.pairingapp.core.ui.components.rememberHintsForState
 import com.example.pairingapp.features.settings.app.AppSettingsScreen
+import com.example.pairingapp.features.settings.debug.DebugScreen
 import com.example.pairingapp.features.settings.emulators.EmulatorsScreen
 import com.example.pairingapp.features.settings.layout.SettingsLayout
 import com.example.pairingapp.features.settings.layout.SettingsSidebar
-import com.example.pairingapp.features.settings.debug.DebugScreen
 
 private enum class SettingsCategory(@get:StringRes val labelRes: Int) {
     APPEARANCE(R.string.settings_category_App),
@@ -57,9 +57,8 @@ fun SettingsHomeScreen(
     onSetEnabledEmulators: (Set<String>) -> Unit,
     writeMode: WriteMode,
     onSetWriteMode: (WriteMode) -> Unit,
-    internalController1: String?,
-    internalController2: String?,
-    onSetInternalControllers: (String?, String?) -> Unit,
+    internalController: String?,
+    onSetInternalController: (String?) -> Unit,
     debugLogs: Boolean,
     onSetDebugLogs: (Boolean) -> Unit,
     onClearLogs: () -> Unit,
@@ -169,9 +168,8 @@ fun SettingsHomeScreen(
                         onSetLanguage = onSetLanguage,
                         writeMode = writeMode,
                         onSetWriteMode = onSetWriteMode,
-                        internalController1 = internalController1,
-                        internalController2 = internalController2,
-                        onSetInternalControllers = onSetInternalControllers,
+                        internalController = internalController,
+                        onSetInternalController = onSetInternalController,
                         onHintStateChanged = { state ->
                             if (mode == SettingsMode.CATEGORY) {
                                 contentHintState = state

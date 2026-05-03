@@ -7,13 +7,12 @@ class InternalControllerClassifier : ControllerClassifier {
 
     override fun classify(
         controllers: List<ControllerInfo>,
-        internalController1: String?,
-        internalController2: String?
+        internalController: String?
     ): List<DetectedController> {
         return controllers.map { controller ->
             val key = controller.internalProfileKey()
 
-            val type = if (key == internalController1 || key == internalController2) {
+            val type = if (key == internalController) {
                 ControllerType.INTERNAL
             } else {
                 ControllerType.EXTERNAL

@@ -132,9 +132,8 @@ class PairingEngine(
         val previousSettings = currentSettings
         val wasInitialized = settingsInitialized
 
-        val internalControllersChanged =
-            previousSettings.internalController1 != settings.internalController1 ||
-                    previousSettings.internalController2 != settings.internalController2
+        val internalControllerChanged =
+            previousSettings.internalController != settings.internalController
 
         val writeRelevantSettingsChanged =
             previousSettings.writeMode != settings.writeMode ||
@@ -176,7 +175,7 @@ class PairingEngine(
             return
         }
 
-        if (internalControllersChanged) {
+        if (internalControllerChanged) {
             scheduleResync("internal_controller_settings_changed")
             return
         }
@@ -242,8 +241,7 @@ class PairingEngine(
 
         val resolvedControllers =
             controllerAssignmentService.resolveVisibleControllers(
-                internalController1 = currentSettings.internalController1,
-                internalController2 = currentSettings.internalController2
+                internalController = currentSettings.internalController
             )
 
         publishResolvedControllers(resolvedControllers)

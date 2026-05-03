@@ -29,8 +29,7 @@ class AppSettingsRepository(
             enabledEmulators = prefs[SettingsKeys.ENABLED_EMULATORS] ?: emptySet(),
             writeMode = writeMode,
             onboardingDone = prefs[SettingsKeys.ONBOARDING_DONE] ?: false,
-            internalController1 = prefs[SettingsKeys.INTERNAL_CONTROLLER_1],
-            internalController2 = prefs[SettingsKeys.INTERNAL_CONTROLLER_2],
+            internalController = prefs[SettingsKeys.INTERNAL_CONTROLLER],
             debugLogs = prefs[SettingsKeys.DEBUG_LOGS] ?: false,
         )
     }
@@ -55,18 +54,17 @@ class AppSettingsRepository(
         dataStore.edit { it[SettingsKeys.ONBOARDING_DONE] = value }
     }
 
-    suspend fun setInternalControllers(internal1: String?, internal2: String?) {
+    suspend fun setInternalController(value: String?) {
         dataStore.edit { prefs ->
-            if (internal1 == null) prefs.remove(SettingsKeys.INTERNAL_CONTROLLER_1)
-            else prefs[SettingsKeys.INTERNAL_CONTROLLER_1] = internal1
-
-            if (internal2 == null) prefs.remove(SettingsKeys.INTERNAL_CONTROLLER_2)
-            else prefs[SettingsKeys.INTERNAL_CONTROLLER_2] = internal2
+            if (value == null) {
+                prefs.remove(SettingsKeys.INTERNAL_CONTROLLER)
+            } else {
+                prefs[SettingsKeys.INTERNAL_CONTROLLER] = value
+            }
         }
     }
 
     suspend fun setDebugLogs(enabled: Boolean) {
         dataStore.edit { it[SettingsKeys.DEBUG_LOGS] = enabled }
     }
-
 }

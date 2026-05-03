@@ -10,16 +10,14 @@ class DefaultControllerAssignmentService(
 ) : ControllerAssignmentService {
 
     override fun resolveVisibleControllers(
-        internalController1: String?,
-        internalController2: String?
+        internalController: String?
     ): List<ControllerInfo> {
 
         val scanned = scanner.scan()
 
         val classified = classifier.classify(
             controllers = scanned,
-            internalController1 = internalController1,
-            internalController2 = internalController2
+            internalController = internalController
         )
 
         return resolver.resolve(classified)

@@ -1,6 +1,5 @@
-﻿package com.example.pairingapp.features.onboarding.internalcontrollers
+package com.example.pairingapp.features.onboarding.internalcontrollers
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
@@ -37,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pairingapp.R
 import com.example.pairingapp.core.input.PadKey
-import com.example.pairingapp.core.input.availableInternalControllerChoices
 import com.example.pairingapp.core.input.internalControllerLabel
 import com.example.pairingapp.core.input.mapKeyEvent
 import com.example.pairingapp.core.ui.components.ActionButton
@@ -47,24 +44,20 @@ import com.example.pairingapp.features.components.SelectionDialog
 
 @Composable
 fun InternalControllersSetupScreen(
-    initialInternal1: String?,
-    initialInternal2: String?,
-    onDone: (internal1: String?, internal2: String?) -> Unit,
+    initialInternalController: String?,
+    onDone: (internalController: String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val noneLabel = stringResource(R.string.none)
     val title = stringResource(R.string.internal_controllers_title)
-    val internalController1Label = stringResource(R.string.internal_controller_1)
-    val internalController2Label = stringResource(R.string.internal_controller_2)
     val nextLabel = stringResource(R.string.next)
     val explanationText = stringResource(R.string.internal_controllers_explanation)
 
-    val FOCUS_SLOT_1 = 0
-    val FOCUS_SLOT_2 = 1
-    val FOCUS_NEXT = 2
+    val FOCUS_CONTROLLER = 0
+    val FOCUS_NEXT = 1
 
     val rootFocusRequester = remember { FocusRequester() }
-    val focusRequesters = remember { List(3) { FocusRequester() } }
+    val focusRequesters = remember { List(2) { FocusRequester() } }
 
     LaunchedEffect(Unit) {
         rootFocusRequester.requestFocus()
@@ -74,28 +67,8 @@ fun InternalControllersSetupScreen(
     val showDialog by pickerViewModel.showDialog.collectAsState()
     val choices by pickerViewModel.choices.collectAsState()
 
-    var focusedIndex by rememberSaveable { mutableIntStateOf(FOCUS_SLOT_1) }
-    var internal1 by rememberSaveable { mutableStateOf(initialInternal1) }
-    var internal2 by rememberSaveable { mutableStateOf(initialInternal2) }
-
-    val selectedSlot = when (focusedIndex) {
-        FOCUS_SLOT_2 -> 1
-        else -> 0
-    }
-
-    val dialogChoices = availableInternalControllerChoices(
-        choices = choices,
-        selectedSlot = selectedSlot,
-        internal1 = internal1,
-        internal2 = internal2
-    )
-
-    fun setSlotValue(value: String?) {
-        when (focusedIndex) {
-            FOCUS_SLOT_1 -> internal1 = value
-            FOCUS_SLOT_2 -> internal2 = value
-        }
-    }
+    var focusedIndex by rememberSaveable { mutableIntStateOf(FOCUS_CONTROLLER) }
+    var internalController by rememberSaveable { mutableStateOf(initialInternalController) }
 
     Box(
         modifier = modifier
@@ -108,7 +81,7 @@ fun InternalControllersSetupScreen(
 
                 when (mapKeyEvent(event.nativeKeyEvent)) {
                     PadKey.UP -> {
-                        focusedIndex = (focusedIndex - 1).coerceAtLeast(FOCUS_SLOT_1)
+                        focusedIndex = (focusedIndex - 1).coerceAtLeast(FOCUS_CONTROLLER)
                         true
                     }
 
@@ -119,13 +92,13 @@ fun InternalControllersSetupScreen(
 
                     PadKey.A -> {
                         when (focusedIndex) {
-                            FOCUS_SLOT_1, FOCUS_SLOT_2 -> {
+                            FOCUS_CONTROLLER -> {
                                 pickerViewModel.open(noneLabel)
                                 true
                             }
 
                             FOCUS_NEXT -> {
-                                onDone(internal1, internal2)
+                                onDone(internalController)
                                 true
                             }
 
@@ -185,36 +158,18 @@ fun InternalControllersSetupScreen(
                 ) {
                     ActionButton(
                         text = internalControllerLabel(
-                            internal1,
+                            internalController,
                             choices,
                             noneLabel
                         ),
                         selected = false,
                         active = true,
-                        focusRequester = focusRequesters[0],
+                        focusRequester = focusRequesters[FOCUS_CONTROLLER],
                         previousFocusRequester = null,
-                        nextFocusRequester = focusRequesters[1],
-                        focused = focusedIndex == FOCUS_SLOT_1,
+                        nextFocusRequester = focusRequesters[FOCUS_NEXT],
+                        focused = focusedIndex == FOCUS_CONTROLLER,
                         onClick = {
-                            focusedIndex = FOCUS_SLOT_1
-                            pickerViewModel.open(noneLabel)
-                        }
-                    )
-
-                    ActionButton(
-                        text = internalControllerLabel(
-                            internal2,
-                            choices,
-                            noneLabel
-                        ),
-                        selected = false,
-                        active = true,
-                        focusRequester = focusRequesters[1],
-                        previousFocusRequester = focusRequesters[0],
-                        nextFocusRequester = focusRequesters[2],
-                        focused = focusedIndex == FOCUS_SLOT_2,
-                        onClick = {
-                            focusedIndex = FOCUS_SLOT_2
+                            focusedIndex = FOCUS_CONTROLLER
                             pickerViewModel.open(noneLabel)
                         }
                     )
@@ -224,19 +179,11 @@ fun InternalControllersSetupScreen(
 
         if (showDialog) {
             SelectionDialog(
-                title = when (focusedIndex) {
-                    FOCUS_SLOT_1 -> internalController1Label
-                    FOCUS_SLOT_2 -> internalController2Label
-                    else -> internalController1Label
-                },
-                choices = dialogChoices,
-                current = when (focusedIndex) {
-                    FOCUS_SLOT_1 -> internal1
-                    FOCUS_SLOT_2 -> internal2
-                    else -> internal1
-                },
+                title = title,
+                choices = choices,
+                current = internalController,
                 onPick = { picked ->
-                    setSlotValue(picked)
+                    internalController = picked
                     pickerViewModel.close()
                 },
                 onDismiss = {
@@ -249,10 +196,10 @@ fun InternalControllersSetupScreen(
             text = nextLabel,
             selected = focusedIndex == FOCUS_NEXT,
             active = true,
-            focusRequester = focusRequesters[2],
+            focusRequester = focusRequesters[FOCUS_NEXT],
             focused = focusedIndex == FOCUS_NEXT,
             onClick = {
-                onDone(internal1, internal2)
+                onDone(internalController)
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -267,9 +214,8 @@ fun InternalControllersSetupScreen(
 fun InternalControllersSetupScreenPreview() {
     AppTheme(darkTheme = false) {
         InternalControllersSetupScreen(
-            initialInternal1 = "odin2 portal",
-            initialInternal2 = null,
-            onDone = { _, _ -> }
+            initialInternalController = "odin2 portal",
+            onDone = { }
         )
     }
 }
@@ -279,9 +225,8 @@ fun InternalControllersSetupScreenPreview() {
 fun InternalControllersSetupScreenPreviewCompact() {
     AppTheme(darkTheme = false) {
         InternalControllersSetupScreen(
-            initialInternal1 = "odin2 portal",
-            initialInternal2 = null,
-            onDone = { _, _ -> }
+            initialInternalController = "odin2 portal",
+            onDone = { }
         )
     }
 }

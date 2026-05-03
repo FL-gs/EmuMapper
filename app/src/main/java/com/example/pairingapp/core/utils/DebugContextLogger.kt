@@ -35,15 +35,14 @@ object DebugContextLogger {
             LogTags.DATASTORE,
             """
             settings applied in pairing engine
-            onboardingDone       = ${settings.onboardingDone}
-            internalController1  = ${settings.internalController1}
-            internalController2  = ${settings.internalController2}
-            darkTheme            = ${settings.darkTheme}
-            language             = ${settings.language}
-            enabledEmulators     = ${settings.enabledEmulators}
-            writeMode            = ${settings.writeMode}
-            debugLogs            = ${settings.debugLogs}
-            hasActiveHosts       = $hasActiveHosts
+            onboardingDone      = ${settings.onboardingDone}
+            internalController  = ${settings.internalController}
+            darkTheme           = ${settings.darkTheme}
+            language            = ${settings.language}
+            enabledEmulators    = ${settings.enabledEmulators}
+            writeMode           = ${settings.writeMode}
+            debugLogs           = ${settings.debugLogs}
+            hasActiveHosts      = $hasActiveHosts
             """.trimIndent()
         )
     }
@@ -57,12 +56,8 @@ object DebugContextLogger {
             AppLogger.d(LogTags.DATASTORE, "settings changed | onboardingDone=${previous.onboardingDone} -> ${current.onboardingDone}")
         }
 
-        if (previous.internalController1 != current.internalController1) {
-            AppLogger.d(LogTags.DATASTORE, "settings changed | internalController1=${previous.internalController1} -> ${current.internalController1}")
-        }
-
-        if (previous.internalController2 != current.internalController2) {
-            AppLogger.d(LogTags.DATASTORE, "settings changed | internalController2=${previous.internalController2} -> ${current.internalController2}")
+        if (previous.internalController != current.internalController) {
+            AppLogger.d(LogTags.DATASTORE, "settings changed | internalController=${previous.internalController} -> ${current.internalController}")
         }
 
         if (previous.darkTheme != current.darkTheme) {
