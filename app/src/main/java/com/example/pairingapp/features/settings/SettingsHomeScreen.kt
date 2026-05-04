@@ -2,12 +2,8 @@ package com.example.pairingapp.features.settings
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.focusable
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +16,6 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pairingapp.R
 import com.example.pairingapp.core.input.PadKey
 import com.example.pairingapp.core.input.mapKeyEvent
@@ -64,9 +59,6 @@ fun SettingsHomeScreen(
     onClearLogs: () -> Unit,
 ) {
     val settingsTitle = stringResource(R.string.settings_sidebar_title)
-
-    val settingsViewModel: SettingsViewModel = viewModel()
-    val uiState by settingsViewModel.uiState.collectAsState()
 
     var selectedName by rememberSaveable { mutableStateOf(SettingsCategory.APPEARANCE.name) }
     var modeName by rememberSaveable { mutableStateOf(SettingsMode.HUB.name) }
@@ -187,13 +179,6 @@ fun SettingsHomeScreen(
                             if (mode == SettingsMode.CATEGORY) {
                                 contentHintState = state
                             }
-                        },
-                        onRequestEnableRetroArch = { pkg ->
-                            settingsViewModel.onRetroArchToggleRequested(
-                                packageName = pkg,
-                                enabledEmulators = enabledEmulators,
-                                onSetEnabledEmulators = onSetEnabledEmulators,
-                            )
                         }
                     )
                 }
@@ -214,41 +199,4 @@ fun SettingsHomeScreen(
             }
         }
     )
-
-    if (uiState.showRetroArchDialog) {
-        AlertDialog(
-            onDismissRequest = {
-                settingsViewModel.dismissRetroArchDialog()
-            },
-            title = {
-                Text(stringResource(R.string.retroarch_dialog_title))
-            },
-            text = {
-                Text(
-                    stringResource(R.string.retroarch_dialog_message)
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        settingsViewModel.confirmRetroArchSetup(
-                            enabledEmulators = enabledEmulators,
-                            onSetEnabledEmulators = onSetEnabledEmulators,
-                        )
-                    }
-                ) {
-                    Text(stringResource(R.string.accept))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        settingsViewModel.dismissRetroArchDialog()
-                    }
-                ) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
-        )
-    }
 }

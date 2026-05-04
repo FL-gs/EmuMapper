@@ -20,9 +20,9 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.pairingapp.core.input.PadKey
 import com.example.pairingapp.core.input.mapKeyEvent
 import com.example.pairingapp.core.ui.components.HintBarState
@@ -36,8 +36,7 @@ fun EmulatorsScreen(
     enabledPackages: Set<String>,
     onSetEnabledPackages: (Set<String>) -> Unit,
     onHintStateChanged: (HintBarState) -> Unit,
-    modifier: Modifier = Modifier,
-    onRequestEnableRetroArch: ((String) -> Unit)? = null,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -96,6 +95,20 @@ fun EmulatorsScreen(
         )
     }
 
+    fun toggleFocusedEmulator() {
+        val emulator = installed.getOrNull(focusIndex) ?: return
+        val emulatorId = emulator.id
+        val isEnabled = enabledPackages.contains(emulatorId)
+
+        val next = if (isEnabled) {
+            enabledPackages - emulatorId
+        } else {
+            enabledPackages + emulatorId
+        }
+
+        onSetEnabledPackages(next)
+    }
+
     val inputModifier = Modifier
         .focusRequester(focusRequester)
         .focusable(enabled = active)
@@ -116,23 +129,7 @@ fun EmulatorsScreen(
                 }
 
                 PadKey.A -> {
-                    if (installed.isNotEmpty()) {
-                        val emulator = installed[focusIndex]
-                        val emulatorId = emulator.id
-                        val isEnabled = enabledPackages.contains(emulatorId)
-
-                        if (!isEnabled && emulatorId == "retroarch") {
-                            onRequestEnableRetroArch?.invoke(emulatorId)
-                        } else {
-                            val next = if (isEnabled) {
-                                enabledPackages - emulatorId
-                            } else {
-                                enabledPackages + emulatorId
-                            }
-
-                            onSetEnabledPackages(next)
-                        }
-                    }
+                    toggleFocusedEmulator()
                     true
                 }
 
@@ -154,5 +151,3 @@ fun EmulatorsScreen(
         )
     }
 }
-
-

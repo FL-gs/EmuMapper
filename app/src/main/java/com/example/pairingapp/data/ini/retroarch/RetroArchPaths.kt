@@ -23,13 +23,4 @@ object RetroArchPaths {
 
     fun retroarchCfg(): File? =
         retroarchBaseDir()?.let { File(it, "retroarch.cfg") }
-
-    /**
-     * Dossier autoconfig que l'app va utiliser
-     * (accessible sans root)
-     *
-     * /storage/emulated/0/RetroArch/autoconfig
-     */
-    fun appAutoconfigDir(): File =
-        File(StoragePaths.sharedStorageRoot, "RetroArch/autoconfig")
 }

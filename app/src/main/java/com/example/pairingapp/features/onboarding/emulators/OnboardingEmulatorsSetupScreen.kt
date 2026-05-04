@@ -1,6 +1,5 @@
 package com.example.pairingapp.features.onboarding.emulators
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,13 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pairingapp.R
 import com.example.pairingapp.core.input.PadKey
 import com.example.pairingapp.core.input.mapKeyEvent
@@ -43,7 +38,6 @@ import com.example.pairingapp.core.ui.components.ActionButton
 import com.example.pairingapp.core.ui.components.AppConfirmDialog
 import com.example.pairingapp.data.emulators.EmulatorDef
 import com.example.pairingapp.data.emulators.EmulatorDetector
-import com.example.pairingapp.features.settings.SettingsViewModel
 import com.example.pairingapp.features.emulators.components.EmulatorToggleList
 
 @Composable
@@ -56,9 +50,6 @@ fun OnboardingEmulatorsSetupScreen(
 ) {
     val context = LocalContext.current
     val detector = remember { EmulatorDetector(context) }
-
-    val settingsViewModel: SettingsViewModel = viewModel()
-    val uiState by settingsViewModel.uiState.collectAsState()
 
     var installed by remember {
         mutableStateOf<List<EmulatorDef>>(emptyList())
@@ -104,15 +95,6 @@ fun OnboardingEmulatorsSetupScreen(
             return
         }
 
-        if (emulatorId == "retroarch") {
-            settingsViewModel.onRetroArchToggleRequested(
-                packageName = emulatorId,
-                enabledEmulators = enabledEmulators,
-                onSetEnabledEmulators = onSetEnabledEmulators
-            )
-            return
-        }
-
         onSetEnabledEmulators(enabledEmulators + emulatorId)
     }
 
@@ -122,7 +104,7 @@ fun OnboardingEmulatorsSetupScreen(
             .focusRequester(rootFocusRequester)
             .focusable()
             .onPreviewKeyEvent { event ->
-                if (uiState.showRetroArchDialog || showSkipEmulatorsDialog) {
+                if (showSkipEmulatorsDialog) {
                     return@onPreviewKeyEvent false
                 }
 
@@ -269,41 +251,6 @@ fun OnboardingEmulatorsSetupScreen(
                 .align(Alignment.BottomEnd)
                 .padding(end = 24.dp, bottom = 24.dp)
                 .widthIn(min = 120.dp, max = 160.dp)
-        )
-    }
-
-    if (uiState.showRetroArchDialog) {
-        AlertDialog(
-            onDismissRequest = {
-                settingsViewModel.dismissRetroArchDialog()
-            },
-            title = {
-                Text(stringResource(R.string.retroarch_dialog_title))
-            },
-            text = {
-                Text(stringResource(R.string.retroarch_dialog_message))
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        settingsViewModel.confirmRetroArchSetup(
-                            enabledEmulators = enabledEmulators,
-                            onSetEnabledEmulators = onSetEnabledEmulators
-                        )
-                    }
-                ) {
-                    Text(stringResource(R.string.accept))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        settingsViewModel.dismissRetroArchDialog()
-                    }
-                ) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
         )
     }
 

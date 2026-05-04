@@ -6,7 +6,6 @@ import com.example.pairingapp.core.utils.LogTags
 import com.example.pairingapp.data.emulators.EmulatorCatalog
 import com.example.pairingapp.data.ini.dolphin.DolphinRepository
 import com.example.pairingapp.data.ini.eden.EdenRepository
-import com.example.pairingapp.data.ini.retroarch.RetroArchPaths
 import com.example.pairingapp.data.ini.retroarch.RetroArchRepository
 
 object IniManager {
@@ -43,12 +42,8 @@ object IniManager {
                 }
 
                 "retroarch" -> {
-                    val path = RetroArchPaths.appAutoconfigDir().path
                     IniLog.emulatorWriting("retroarch")
-                    AppLogger.d(LogTags.INI, "emulator | retroarch | autoconfig=$path")
-
                     RetroArchRepository.configureRetroArch(
-                        autoconfigPath = path,
                         controllers = controllers
                     )
                 }
