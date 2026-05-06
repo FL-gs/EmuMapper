@@ -1,34 +1,82 @@
-# PairingApp
+  <img src="./assets/main.gif" width="800"/>
 
-PairingApp is an Android app designed for Android handheld gaming devices such as Retroid or AYN consoles.
+---
+
+# EmuCtrlr
+
+EmuCtrlr is an Android app designed for Android handheld gaming devices such as Retroid or AYN consoles.
 
 It automatically manages controller assignments for emulators, enabling a seamless handheld ↔ docked experience.
 The app is designed for controller-based navigation and does not support touchscreen input.
 <p align="center">
 
-  <img src="./assets/main.gif" width="800"/>
+> [!IMPORTANT]
+> EmuCtrlr was originally made for personal use.
+> I am currently refactoring it to support more devices, controllers, and emulator setups.
+>
+> Bugs may occur, and the app may not work correctly on every device or setup yet.
+
+
+> [!WARNING]
+> DualSense controllers are not supported yet.
+
+
 </p>
+
+## Table of Contents
+
+- [How It Works](#how-it-works)
+  - [Controller Detection](#controller-detection)
+  - [Config Writing](#config-writing)
+- [Emulator Compatibility](#emulator-compatibility)
+- [Important Emulator Behavior](#important-emulator-behavior)
+- [First Setup](#first-setup)
+- [Modes](#modes)
+    - [Manual Mode](#manual-mode)
+    - [Automatic Mode](#automatic-mode)
+- [Settings](#settings)
+- [Performance](#performance)
+- [Troubleshooting](#troubleshooting)
+
+---
 
 ## How It Works
 
-PairingApp detects connected controllers and writes the correct configuration into supported emulator config files.
+EmuCtrlr works in two steps:
 
-PairingApp scans connected controllers when the app starts and whenever the controller state changes.
+1. It detects the connected controllers.
+2. It writes the correct controller order into supported emulator config files.
 
-Installed emulators are detected automatically and can be enabled from Settings.
+### Controller Detection
 
-> ℹ️ After the first setup, go to Settings and enable the emulators you want PairingApp to manage.
+EmuCtrlr scans connected controllers:
+
+- when the app starts
+- when a controller is connected
+- when a controller is disconnected
+- when the controller order changes
 
 Controllers are assigned to player slots based on their connection order.
 
-When external controllers are connected, the app switches from built-in controls to external controllers for Player 1, and switches back to built-in controls when all external controllers are disconnected.
+When external controllers are connected, EmuCtrlr switches Player 1 from the built-in controls to the first external controller.
 
-This enables a seamless handheld ↔ docked experience.
+When all external controllers are disconnected, EmuCtrlr switches Player 1 back to the built-in controls.
+
+### Config Writing
+
+After detecting the controller order, EmuCtrlr can write the updated configuration into enabled emulator config files.
+
+The write behavior depends on the selected mode:
+
+- In **Manual Mode**, open EmuCtrlr and hold **Start** with Player 1 to write the controller configuration.
+- In **Automatic Mode**, EmuCtrlr writes the configuration automatically whenever the controller state changes.
+
+Only enabled emulators are modified.
+Disabled emulators are not affected.
 
 <img src="./assets/main_connected.png" width="800"/>
 
-
-
+---
 
 ## Emulator Compatibility
 
@@ -43,36 +91,39 @@ If you want me to test other standalone emulators, feel free to contact me. This
 | AetherSX2   | ❌     | Requires root access to config files                                                 |
 | NetherSX2   | ❌     | Requires root access to config files                                                 |
 
-> ℹ️ For RetroArch, PairingApp uses the priority option to match player order with controller connection order. However, this feature is currently bugged.
-> Until it is fixed on RetroArch, you can disable config writing for RetroArch and rely on its built-in auto configuration.
+> [!NOTE]
+> For RetroArch, EmuCtrlr uses the priority option to match player order with controller connection order.
+> However, this RetroArch feature is currently bugged.
+>
+> Until this is fixed in RetroArch, it is recommended to disable config writing for RetroArch.
 
-
+---
 ## Important Emulator Behavior
 
-> ⚠️ Emulators must be closed for changes to take effect.
+If an emulator is already running, restart it for the changes to take effect.
 
-If an emulator is already running, you need to restart it.
+This happens because most emulators load their controller configuration only when they start. EmuCtrlr cannot force an emulator to reload its config while a game is already running.
 
-This behavior is due to how emulators load their configuration files and cannot be changed by this app.
+For a smoother docked experience, you can use a keymapper shortcut to close the current game or emulator directly from your controller.
+
 
 ## First Setup
 
 <img src="./assets/onboarding.png" width="800"/>
 
-On first launch, PairingApp needs to identify which controller profile belongs to the built-in controls.
+On first launch, EmuCtrlr needs to identify which controller profile belongs to the handheld built-in controls.
 
 1. Launch the app
-2. Select the built-in controller profile (it may appear as "Xbox Wireless Controller" or other names).  
-   Note: Select the profile you are using. You do not need to configure multiple profiles.
-3. Enable the emulators you want the app to manage in Settings
+2. Select the built-in controller profile (it may appear as "Xbox Wireless Controller" or other names).
+3. Enable the emulators you want EmuCtrlr to manage
 
-> ⚠️ Because some Android handheld devices use proxy controller profiles, it is recommended to turn off external controllers before selecting the built-in profile.
+> [!IMPORTANT]
+> Because some Android handheld devices use proxy controller profiles, it is recommended to turn off external controllers before selecting the built-in profile.
 
-You can change the built-in controller profile later in Settings.
-
+---
 
 ## Modes
-
+You can change the config writing mode from the app Settings.
 ### Manual Mode
 
 Manual mode gives full control to the user.
@@ -96,6 +147,8 @@ Automatic mode runs as a foreground service, allowing the app to continuously mo
 Use this mode if you want a fully automated experience without manually triggering configuration updates.
 
 For RAM usage while running in the background, see the RAM usage in the Performance section below.
+
+---
 
 ## Settings
 
@@ -123,6 +176,8 @@ Only enabled emulators will be modified. Disabled emulators will not be affected
 
 Enable debug logs when troubleshooting an issue.
 
+---
+
 ## Performance
 
 ### RAM Usage During Config Writing
@@ -133,11 +188,14 @@ During normal idle usage, the app uses around **80 MB of RAM**.
 
 During config writing, RAM usage can temporarily increase by around **8 MB**, then returns to the normal idle value.
 
+
 ### 24h Memory Test
 
 ![24h memory graph](./assets/ram-24h.png)
 
 A 24-hour memory test shows stable RAM usage with no visible memory leak.
+
+---
 
 ## Troubleshooting
 
