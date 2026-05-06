@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.pairingapp"
+    namespace = "dev.emuctrlr.app"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.example.pairingapp"
+        applicationId = "dev.emuctrlr.app"
         minSdk = 26
         targetSdk = 36
         versionCode = 4

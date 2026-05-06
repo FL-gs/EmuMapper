@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PairingApp</string>
+    <string name="app_name">EmuCtrlr</string>
     <string name="none">Aucun</string>
     <string name="cancel">Annuler</string>
     <string name="accept">Accepter</string>
