@@ -1,6 +1,10 @@
 package dev.emuctrlr.app.data.ini.dolphin
 
-import dev.emuctrlr.app.core.input.ControllerInfo
+import android.view.KeyEvent
+import dev.emuctrlr.app.core.input.mapping.AxisSign
+import dev.emuctrlr.app.core.input.mapping.EmuControl
+import dev.emuctrlr.app.core.input.mapping.InputBinding
+import dev.emuctrlr.app.core.input.mapping.MappedController
 
 object DolphinGcpadIniPatcher {
 
@@ -9,36 +13,14 @@ object DolphinGcpadIniPatcher {
         val lines: MutableList<String>
     )
 
-    private val mappingTemplate: List<Pair<String, String>> = listOf(
-        "Buttons/A" to "`Button A`",
-        "Buttons/B" to "`Button B`",
-        "Buttons/X" to "`Button X`",
-        "Buttons/Y" to "`Button Y`",
-        "Buttons/Z" to "Select",
-        "Buttons/Start" to "Start",
-
-        "Main Stick/Up" to "`Axis 1-`",
-        "Main Stick/Down" to "`Axis 1+`",
-        "Main Stick/Left" to "`Axis 0-`",
-        "Main Stick/Right" to "`Axis 0+`",
-
-        "C-Stick/Up" to "`Axis 14-`",
-        "C-Stick/Down" to "`Axis 14+`",
-        "C-Stick/Left" to "`Axis 11-`",
-        "C-Stick/Right" to "`Axis 11+`",
-
-        "Triggers/L" to "`Axis 23+`",
-        "Triggers/R" to "`Axis 22+`",
-        "Triggers/L-Analog" to "`Axis 23+`",
-        "Triggers/R-Analog" to "`Axis 22+`",
-
-        "D-Pad/Up" to "`Axis 16-`",
-        "D-Pad/Down" to "`Axis 16+`",
-        "D-Pad/Left" to "`Axis 15-`",
-        "D-Pad/Right" to "`Axis 15+`",
+    private data class StickDirections(
+        val up: String,
+        val down: String,
+        val left: String,
+        val right: String
     )
 
-    fun patchIni(original: String, controllers: List<ControllerInfo>): String {
+    fun patchIni(original: String, controllers: List<MappedController>): String {
         val normalized = original
             .replace("\r\n", "\n")
             .replace('\r', '\n')
@@ -46,7 +28,7 @@ object DolphinGcpadIniPatcher {
         val sections = parseSections(normalized)
         val sectionByHeader = sections.associateByTo(linkedMapOf()) { it.header }
 
-        controllers.take(4).forEachIndexed { index, controller ->
+        controllers.take(4).forEachIndexed { index, mappedController ->
             val slot = index + 1
             val header = "[GCPad$slot]"
             val section = sectionByHeader[header] ?: Section(header, mutableListOf()).also {
@@ -54,7 +36,7 @@ object DolphinGcpadIniPatcher {
                 sectionByHeader[header] = it
             }
 
-            patchSection(section, controller)
+            patchSection(section, mappedController)
         }
 
         return buildString(normalized.length + 512) {
@@ -109,7 +91,7 @@ object DolphinGcpadIniPatcher {
         return trimmed.startsWith("[") && trimmed.endsWith("]") && trimmed.length >= 3
     }
 
-    private fun patchSection(section: Section, controller: ControllerInfo) {
+    private fun patchSection(section: Section, mappedController: MappedController) {
         val values = linkedMapOf<String, String>()
 
         // Parse existant en gardant la première occurrence de chaque clé
@@ -126,19 +108,21 @@ object DolphinGcpadIniPatcher {
             }
         }
 
+        val controller = mappedController.controller
         val number = controller.controllerNumber ?: controller.deviceId
         val deviceValue = "Android/$number/${controller.name}"
+        val mappingLines = mappingLinesFor(mappedController)
 
         values["Device"] = deviceValue
 
-        mappingTemplate.forEach { (key, value) ->
+        mappingLines.forEach { (key, value) ->
             values[key] = value
         }
 
         // On reconstruit la section dans un ordre stable:
         // 1. Device
         // 2. Rumble/Motor si présent dans l'ancien fichier
-        // 3. mapping template
+        // 3. mapping Dolphin généré depuis ControllerMapping
         // 4. autres clés restantes non reconnues
         val rebuilt = mutableListOf<String>()
 
@@ -149,14 +133,14 @@ object DolphinGcpadIniPatcher {
             rebuilt += "Rumble/Motor = $existingRumble"
         }
 
-        mappingTemplate.forEach { (key, _) ->
+        mappingLines.forEach { (key, _) ->
             rebuilt += "$key = ${values.getValue(key)}"
         }
 
         val handledKeys = buildSet {
             add("Device")
             add("Rumble/Motor")
-            mappingTemplate.forEach { (key, _) -> add(key) }
+            mappingLines.forEach { (key, _) -> add(key) }
         }
 
         values.forEach { (key, value) ->
@@ -167,5 +151,156 @@ object DolphinGcpadIniPatcher {
 
         section.lines.clear()
         section.lines.addAll(rebuilt)
+    }
+
+    private fun mappingLinesFor(mappedController: MappedController): List<Pair<String, String>> {
+        val mapping = mappedController.mapping
+
+        val mainStick = stickDirections(
+            binding = mapping.bindingFor(EmuControl.LEFT_STICK),
+            defaultAxisX = 0,
+            defaultAxisY = 1
+        )
+
+        val cStick = stickDirections(
+            binding = mapping.bindingFor(EmuControl.RIGHT_STICK),
+            defaultAxisX = 11,
+            defaultAxisY = 14
+        )
+
+        val lTrigger = triggerExpression(
+            binding = mapping.bindingFor(EmuControl.L2),
+            fallback = axisExpression(axis = 23, sign = AxisSign.POSITIVE)
+        )
+
+        val rTrigger = triggerExpression(
+            binding = mapping.bindingFor(EmuControl.R2),
+            fallback = axisExpression(axis = 22, sign = AxisSign.POSITIVE)
+        )
+
+        return listOf(
+            "Buttons/A" to buttonExpression(mapping.bindingFor(EmuControl.A), fallback = "`Button A`"),
+            "Buttons/B" to buttonExpression(mapping.bindingFor(EmuControl.B), fallback = "`Button B`"),
+            "Buttons/X" to buttonExpression(mapping.bindingFor(EmuControl.X), fallback = "`Button X`"),
+            "Buttons/Y" to buttonExpression(mapping.bindingFor(EmuControl.Y), fallback = "`Button Y`"),
+            "Buttons/Z" to buttonExpression(mapping.bindingFor(EmuControl.SELECT), fallback = "Select"),
+            "Buttons/Start" to buttonExpression(mapping.bindingFor(EmuControl.START), fallback = "Start"),
+
+            "Main Stick/Up" to mainStick.up,
+            "Main Stick/Down" to mainStick.down,
+            "Main Stick/Left" to mainStick.left,
+            "Main Stick/Right" to mainStick.right,
+
+            "C-Stick/Up" to cStick.up,
+            "C-Stick/Down" to cStick.down,
+            "C-Stick/Left" to cStick.left,
+            "C-Stick/Right" to cStick.right,
+
+            "Triggers/L" to lTrigger,
+            "Triggers/R" to rTrigger,
+            "Triggers/L-Analog" to lTrigger,
+            "Triggers/R-Analog" to rTrigger,
+
+            "D-Pad/Up" to directionExpression(
+                binding = mapping.bindingFor(EmuControl.DPAD_UP),
+                fallback = axisExpression(axis = 16, sign = AxisSign.NEGATIVE)
+            ),
+            "D-Pad/Down" to directionExpression(
+                binding = mapping.bindingFor(EmuControl.DPAD_DOWN),
+                fallback = axisExpression(axis = 16, sign = AxisSign.POSITIVE)
+            ),
+            "D-Pad/Left" to directionExpression(
+                binding = mapping.bindingFor(EmuControl.DPAD_LEFT),
+                fallback = axisExpression(axis = 15, sign = AxisSign.NEGATIVE)
+            ),
+            "D-Pad/Right" to directionExpression(
+                binding = mapping.bindingFor(EmuControl.DPAD_RIGHT),
+                fallback = axisExpression(axis = 15, sign = AxisSign.POSITIVE)
+            ),
+        )
+    }
+
+    private fun stickDirections(
+        binding: InputBinding?,
+        defaultAxisX: Int,
+        defaultAxisY: Int
+    ): StickDirections {
+        val stick = binding as? InputBinding.Stick
+        val axisX = stick?.axisX ?: defaultAxisX
+        val axisY = stick?.axisY ?: defaultAxisY
+
+        return StickDirections(
+            up = axisExpression(axis = axisY, sign = AxisSign.NEGATIVE),
+            down = axisExpression(axis = axisY, sign = AxisSign.POSITIVE),
+            left = axisExpression(axis = axisX, sign = AxisSign.NEGATIVE),
+            right = axisExpression(axis = axisX, sign = AxisSign.POSITIVE)
+        )
+    }
+
+    private fun directionExpression(
+        binding: InputBinding?,
+        fallback: String
+    ): String {
+        return when (binding) {
+            is InputBinding.AxisDirection -> axisExpression(binding.axis, binding.sign)
+            is InputBinding.Button -> buttonExpression(binding, fallback)
+            is InputBinding.Stick -> fallback
+            null -> fallback
+        }
+    }
+
+    private fun triggerExpression(
+        binding: InputBinding?,
+        fallback: String
+    ): String {
+        return when (binding) {
+            is InputBinding.AxisDirection -> axisExpression(binding.axis, binding.sign)
+            is InputBinding.Button -> when (binding.keyCode) {
+                // Conserve le comportement Dolphin actuel pour le profil Android standard.
+                KeyEvent.KEYCODE_BUTTON_L2 -> axisExpression(axis = 23, sign = AxisSign.POSITIVE)
+                KeyEvent.KEYCODE_BUTTON_R2 -> axisExpression(axis = 22, sign = AxisSign.POSITIVE)
+                else -> buttonExpression(binding, fallback)
+            }
+            is InputBinding.Stick -> fallback
+            null -> fallback
+        }
+    }
+
+    private fun buttonExpression(
+        binding: InputBinding?,
+        fallback: String
+    ): String {
+        return when (binding) {
+            is InputBinding.Button -> keyCodeToDolphinButton(binding.keyCode)
+            is InputBinding.AxisDirection -> axisExpression(binding.axis, binding.sign)
+            is InputBinding.Stick -> fallback
+            null -> fallback
+        }
+    }
+
+    private fun axisExpression(axis: Int, sign: AxisSign): String {
+        return "`Axis $axis${sign.symbol}`"
+    }
+
+    private fun keyCodeToDolphinButton(keyCode: Int): String {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_BUTTON_A -> "`Button A`"
+            KeyEvent.KEYCODE_BUTTON_B -> "`Button B`"
+            KeyEvent.KEYCODE_BUTTON_X -> "`Button X`"
+            KeyEvent.KEYCODE_BUTTON_Y -> "`Button Y`"
+            KeyEvent.KEYCODE_BUTTON_L1 -> "`Button L1`"
+            KeyEvent.KEYCODE_BUTTON_R1 -> "`Button R1`"
+            KeyEvent.KEYCODE_BUTTON_L2 -> "`Button L2`"
+            KeyEvent.KEYCODE_BUTTON_R2 -> "`Button R2`"
+            KeyEvent.KEYCODE_BUTTON_THUMBL -> "`Button ThumbL`"
+            KeyEvent.KEYCODE_BUTTON_THUMBR -> "`Button ThumbR`"
+            KeyEvent.KEYCODE_BUTTON_START -> "Start"
+            KeyEvent.KEYCODE_BUTTON_SELECT -> "Select"
+            KeyEvent.KEYCODE_DPAD_UP -> "`DPad Up`"
+            KeyEvent.KEYCODE_DPAD_DOWN -> "`DPad Down`"
+            KeyEvent.KEYCODE_DPAD_LEFT -> "`DPad Left`"
+            KeyEvent.KEYCODE_DPAD_RIGHT -> "`DPad Right`"
+            else -> "`${KeyEvent.keyCodeToString(keyCode)}`"
+        }
     }
 }

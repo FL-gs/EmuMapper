@@ -1,7 +1,9 @@
 package dev.emuctrlr.app.data.ini.eden
 
-import dev.emuctrlr.app.core.input.ControllerInfo
 import dev.emuctrlr.app.core.input.deduplicationKey
+import dev.emuctrlr.app.core.input.mapping.EmuControl
+import dev.emuctrlr.app.core.input.mapping.InputBinding
+import dev.emuctrlr.app.core.input.mapping.MappedController
 
 object EdenControlsPatcher {
 
@@ -102,17 +104,17 @@ object EdenControlsPatcher {
 
     fun patchIni(
         original: String,
-        controllers: List<ControllerInfo>,
+        controllers: List<MappedController>,
         edenDevices: List<EdenPortEntry>
     ): String {
         val (entries, keyIndex) = parseEntries(original)
         val edenMap = edenDevices.associateBy { it.controller.deduplicationKey() }
 
         for (playerIndex in 0..9) {
-            val controller = controllers.getOrNull(playerIndex)
-            val eden = controller?.let { edenMap[it.deduplicationKey()] }
+            val mappedController = controllers.getOrNull(playerIndex)
+            val eden = mappedController?.controller?.let { edenMap[it.deduplicationKey()] }
 
-            val connected = (controller != null && eden != null)
+            val connected = (mappedController != null && eden != null)
 
             upsertLine(entries, keyIndex, "player_${playerIndex}_connected\\default", "false")
             upsertLine(
@@ -122,67 +124,31 @@ object EdenControlsPatcher {
                 if (connected) "true" else "false"
             )
 
-            if (!connected || controller == null || eden == null) {
+            if (!connected || mappedController == null || eden == null) {
                 continue
             }
 
-            val display = eden.display
-            val guid = eden.guid
-            val port = eden.port
-
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_a", buttonValue(96, display, guid, port))
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_b", buttonValue(97, display, guid, port))
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_x", buttonValue(99, display, guid, port))
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_y", buttonValue(100, display, guid, port))
-
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_l", buttonValue(102, display, guid, port))
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_r", buttonValue(103, display, guid, port))
-
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_zl", buttonValue(104, display, guid, port))
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_zr", buttonValue(105, display, guid, port))
-
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_lstick", buttonValue(106, display, guid, port))
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_rstick", buttonValue(107, display, guid, port))
-
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_plus", buttonValue(108, display, guid, port))
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_minus", buttonValue(109, display, guid, port))
-
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_dleft", axisButtonValue(15, "-", display, guid, port))
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_dup", axisButtonValue(16, "-", display, guid, port))
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_dright", axisButtonValue(15, "+", display, guid, port))
-            upsertLine(entries, keyIndex, "player_${playerIndex}_button_ddown", axisButtonValue(16, "+", display, guid, port))
-
-            upsertLine(entries, keyIndex, "player_${playerIndex}_lstick", stickValue(0, 1, display, guid, port))
-            upsertLine(entries, keyIndex, "player_${playerIndex}_rstick", stickValue(11, 14, display, guid, port))
+            writeControllerBindings(
+                entries = entries,
+                keyIndex = keyIndex,
+                playerIndex = playerIndex,
+                mappedController = mappedController,
+                eden = eden
+            )
         }
 
         // Comportement conservé: player_8 reprend la config de player_0
         val p0 = controllers.getOrNull(0)
-        val eden0 = p0?.let { edenMap[it.deduplicationKey()] }
+        val eden0 = p0?.controller?.let { edenMap[it.deduplicationKey()] }
 
         if (p0 != null && eden0 != null) {
-            val display = eden0.display
-            val guid = eden0.guid
-            val port = eden0.port
-
-            upsertLine(entries, keyIndex, "player_8_button_a", buttonValue(96, display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_b", buttonValue(97, display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_x", buttonValue(99, display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_y", buttonValue(100, display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_l", buttonValue(102, display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_r", buttonValue(103, display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_zl", axisButtonValue(17, "+", display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_zr", axisButtonValue(18, "+", display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_lstick", buttonValue(106, display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_rstick", buttonValue(107, display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_plus", buttonValue(108, display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_minus", buttonValue(109, display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_dleft", axisButtonValue(15, "-", display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_dup", axisButtonValue(16, "-", display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_dright", axisButtonValue(15, "+", display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_button_ddown", axisButtonValue(16, "+", display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_lstick", stickValue(0, 1, display, guid, port))
-            upsertLine(entries, keyIndex, "player_8_rstick", stickValue(11, 14, display, guid, port))
+            writeControllerBindings(
+                entries = entries,
+                keyIndex = keyIndex,
+                playerIndex = 8,
+                mappedController = p0,
+                eden = eden0
+            )
         }
 
         val builder = StringBuilder(original.length + 1024)
@@ -203,5 +169,107 @@ object EdenControlsPatcher {
         }
 
         return builder.toString()
+    }
+
+    private fun writeControllerBindings(
+        entries: MutableList<LineEntry>,
+        keyIndex: MutableMap<String, Int>,
+        playerIndex: Int,
+        mappedController: MappedController,
+        eden: EdenPortEntry
+    ) {
+        val display = eden.display
+        val guid = eden.guid
+        val port = eden.port
+        val mapping = mappedController.mapping
+
+        upsertControl(entries, keyIndex, playerIndex, "button_a", mapping.bindingFor(EmuControl.A), display, guid, port)
+        upsertControl(entries, keyIndex, playerIndex, "button_b", mapping.bindingFor(EmuControl.B), display, guid, port)
+        upsertControl(entries, keyIndex, playerIndex, "button_x", mapping.bindingFor(EmuControl.X), display, guid, port)
+        upsertControl(entries, keyIndex, playerIndex, "button_y", mapping.bindingFor(EmuControl.Y), display, guid, port)
+
+        upsertControl(entries, keyIndex, playerIndex, "button_l", mapping.bindingFor(EmuControl.L1), display, guid, port)
+        upsertControl(entries, keyIndex, playerIndex, "button_r", mapping.bindingFor(EmuControl.R1), display, guid, port)
+
+        upsertControl(entries, keyIndex, playerIndex, "button_zl", mapping.bindingFor(EmuControl.L2), display, guid, port)
+        upsertControl(entries, keyIndex, playerIndex, "button_zr", mapping.bindingFor(EmuControl.R2), display, guid, port)
+
+        upsertControl(entries, keyIndex, playerIndex, "button_lstick", mapping.bindingFor(EmuControl.L3), display, guid, port)
+        upsertControl(entries, keyIndex, playerIndex, "button_rstick", mapping.bindingFor(EmuControl.R3), display, guid, port)
+
+        upsertControl(entries, keyIndex, playerIndex, "button_plus", mapping.bindingFor(EmuControl.START), display, guid, port)
+        upsertControl(entries, keyIndex, playerIndex, "button_minus", mapping.bindingFor(EmuControl.SELECT), display, guid, port)
+
+        upsertControl(entries, keyIndex, playerIndex, "button_dleft", mapping.bindingFor(EmuControl.DPAD_LEFT), display, guid, port)
+        upsertControl(entries, keyIndex, playerIndex, "button_dup", mapping.bindingFor(EmuControl.DPAD_UP), display, guid, port)
+        upsertControl(entries, keyIndex, playerIndex, "button_dright", mapping.bindingFor(EmuControl.DPAD_RIGHT), display, guid, port)
+        upsertControl(entries, keyIndex, playerIndex, "button_ddown", mapping.bindingFor(EmuControl.DPAD_DOWN), display, guid, port)
+
+        upsertStick(entries, keyIndex, playerIndex, "lstick", mapping.bindingFor(EmuControl.LEFT_STICK), display, guid, port)
+        upsertStick(entries, keyIndex, playerIndex, "rstick", mapping.bindingFor(EmuControl.RIGHT_STICK), display, guid, port)
+    }
+
+    private fun upsertControl(
+        entries: MutableList<LineEntry>,
+        keyIndex: MutableMap<String, Int>,
+        playerIndex: Int,
+        keySuffix: String,
+        binding: InputBinding?,
+        display: String,
+        guid: String,
+        port: Int
+    ) {
+        val value = when (binding) {
+            is InputBinding.Button -> buttonValue(
+                button = binding.keyCode,
+                display = display,
+                guid = guid,
+                port = port
+            )
+
+            is InputBinding.AxisDirection -> axisButtonValue(
+                axis = binding.axis,
+                invert = binding.sign.symbol,
+                display = display,
+                guid = guid,
+                port = port
+            )
+
+            is InputBinding.Stick,
+            null -> return
+        }
+
+        upsertLine(
+            entries = entries,
+            keyIndex = keyIndex,
+            key = "player_${playerIndex}_$keySuffix",
+            value = value
+        )
+    }
+
+    private fun upsertStick(
+        entries: MutableList<LineEntry>,
+        keyIndex: MutableMap<String, Int>,
+        playerIndex: Int,
+        keySuffix: String,
+        binding: InputBinding?,
+        display: String,
+        guid: String,
+        port: Int
+    ) {
+        val stick = binding as? InputBinding.Stick ?: return
+
+        upsertLine(
+            entries = entries,
+            keyIndex = keyIndex,
+            key = "player_${playerIndex}_$keySuffix",
+            value = stickValue(
+                axisX = stick.axisX,
+                axisY = stick.axisY,
+                display = display,
+                guid = guid,
+                port = port
+            )
+        )
     }
 }

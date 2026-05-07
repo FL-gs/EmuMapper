@@ -1,13 +1,13 @@
 package dev.emuctrlr.app.core.pairing.write
 
-import dev.emuctrlr.app.core.input.ControllerInfo
+import dev.emuctrlr.app.core.input.mapping.MappedController
 import dev.emuctrlr.app.core.settings.WriteMode
 
 class DefaultWritePolicy : WritePolicy {
 
     override fun decide(
         writeMode: WriteMode,
-        controllers: List<ControllerInfo>,
+        controllers: List<MappedController>,
         currentSnapshot: WriteSnapshot,
         lastWrittenSnapshot: WriteSnapshot?
     ): WriteDecision {

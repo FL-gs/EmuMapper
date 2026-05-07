@@ -4,6 +4,8 @@ import android.content.Context
 import dev.emuctrlr.app.core.domain.controllers.ControllerAssignmentService
 import dev.emuctrlr.app.core.input.ControllerInfo
 import dev.emuctrlr.app.core.input.InputDeviceMonitor
+import dev.emuctrlr.app.core.input.mapping.ControllerMappingResolver
+import dev.emuctrlr.app.core.input.mapping.MappedController
 import dev.emuctrlr.app.core.input.toLogBlock
 import dev.emuctrlr.app.core.pairing.write.ConfigWriter
 import dev.emuctrlr.app.core.pairing.write.WritePolicy
@@ -31,6 +33,7 @@ class PairingEngine(
     context: Context,
     private val settingsRepository: AppSettingsRepository,
     private val controllerAssignmentService: ControllerAssignmentService,
+    private val controllerMappingResolver: ControllerMappingResolver,
     writePolicy: WritePolicy,
     configWriter: ConfigWriter
 ) {
@@ -119,7 +122,7 @@ class PairingEngine(
     fun beginManualWriteHold() {
         writeCoordinator.beginManualWriteHold(
             writeMode = currentSettings.writeMode,
-            controllers = _visibleControllers.value,
+            controllers = resolveMappedControllers(_visibleControllers.value),
             enabledEmulators = currentSettings.enabledEmulators
         )
     }
@@ -217,9 +220,15 @@ class PairingEngine(
 
         writeCoordinator.onStateChanged(
             writeMode = currentSettings.writeMode,
-            controllers = controllers,
+            controllers = resolveMappedControllers(controllers),
             enabledEmulators = currentSettings.enabledEmulators
         )
+    }
+
+    private fun resolveMappedControllers(
+        controllers: List<ControllerInfo>
+    ): List<MappedController> {
+        return controllerMappingResolver.resolveAll(controllers)
     }
 
     private fun scheduleResync(reason: String) {

@@ -1,6 +1,6 @@
 package dev.emuctrlr.app.data.ini
 
-import dev.emuctrlr.app.core.input.ControllerInfo
+import dev.emuctrlr.app.core.input.mapping.MappedController
 import dev.emuctrlr.app.core.utils.AppLogger
 import dev.emuctrlr.app.core.utils.LogTags
 import dev.emuctrlr.app.data.emulators.EmulatorCatalog
@@ -12,7 +12,7 @@ object IniManager {
 
     fun writeAll(
         enabledEmulators: Set<String>,
-        controllers: List<ControllerInfo>
+        controllers: List<MappedController>
     ): WriteResult {
         if (controllers.isEmpty()) {
             IniLog.skipNoControllers()
@@ -44,7 +44,7 @@ object IniManager {
                 "retroarch" -> {
                     IniLog.emulatorWriting("retroarch")
                     RetroArchRepository.configureRetroArch(
-                        controllers = controllers
+                        controllers = controllers.map { it.controller }
                     )
                 }
 

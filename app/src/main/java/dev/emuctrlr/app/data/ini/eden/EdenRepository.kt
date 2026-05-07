@@ -1,13 +1,13 @@
 package dev.emuctrlr.app.data.ini.eden
 
-import dev.emuctrlr.app.core.input.ControllerInfo
+import dev.emuctrlr.app.core.input.mapping.MappedController
 import dev.emuctrlr.app.data.ini.IniLog
 import dev.emuctrlr.app.data.ini.WriteResult
 
 object EdenRepository {
 
     fun writeControllers(
-        controllers: List<ControllerInfo>
+        controllers: List<MappedController>
     ): WriteResult = runCatching {
         val file = EdenPaths.configFile()
 

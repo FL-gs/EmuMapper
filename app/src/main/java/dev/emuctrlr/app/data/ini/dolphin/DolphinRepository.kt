@@ -1,6 +1,6 @@
 package dev.emuctrlr.app.data.ini.dolphin
 
-import dev.emuctrlr.app.core.input.ControllerInfo
+import dev.emuctrlr.app.core.input.mapping.MappedController
 import dev.emuctrlr.app.data.ini.IniLog
 import dev.emuctrlr.app.data.ini.WriteResult
 
@@ -10,7 +10,7 @@ object DolphinRepository {
     private const val DOLPHIN_INI = "Dolphin.ini"
     private const val GCPAD_INI = "GCPadNew.ini"
 
-    fun writeControllers(controllers: List<ControllerInfo>): WriteResult = runCatching {
+    fun writeControllers(controllers: List<MappedController>): WriteResult = runCatching {
         val dolphinResult = writeDolphinIni()
         if (dolphinResult is WriteResult.Failure) {
             return@runCatching dolphinResult
@@ -56,7 +56,7 @@ object DolphinRepository {
     }
 
     private fun writeGcPadIni(
-        controllers: List<ControllerInfo>
+        controllers: List<MappedController>
     ): WriteResult {
         val file = DolphinPaths.gcPadIni()
 

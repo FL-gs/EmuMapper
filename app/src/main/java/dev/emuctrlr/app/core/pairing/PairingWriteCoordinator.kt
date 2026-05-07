@@ -1,6 +1,6 @@
 package dev.emuctrlr.app.core.pairing
 
-import dev.emuctrlr.app.core.input.ControllerInfo
+import dev.emuctrlr.app.core.input.mapping.MappedController
 import dev.emuctrlr.app.core.input.toLogBlock
 import dev.emuctrlr.app.core.pairing.write.ConfigWriter
 import dev.emuctrlr.app.core.pairing.write.WriteDecision
@@ -45,7 +45,7 @@ class PairingWriteCoordinator(
 
     fun onStateChanged(
         writeMode: WriteMode,
-        controllers: List<ControllerInfo>,
+        controllers: List<MappedController>,
         enabledEmulators: Set<String>
     ) {
         val snapshot = WriteSnapshot(
@@ -94,7 +94,7 @@ class PairingWriteCoordinator(
 
     fun beginManualWriteHold(
         writeMode: WriteMode,
-        controllers: List<ControllerInfo>,
+        controllers: List<MappedController>,
         enabledEmulators: Set<String>
     ) {
         if (writeMode == WriteMode.AUTO) return
@@ -178,7 +178,7 @@ class PairingWriteCoordinator(
     private fun scheduleAutoWrite(snapshot: WriteSnapshot) {
         AppLogger.d(
             LogTags.INI,
-            "write queue | scheduled | delay=${AUTO_WRITE_DEBOUNCE_MS}ms\ncontrollers:\n${snapshot.controllers.toLogBlock()}"
+            "write queue | scheduled | delay=${AUTO_WRITE_DEBOUNCE_MS}ms\ncontrollers:\n${snapshot.controllers.toControllerInfoList().toLogBlock()}"
         )
 
         autoWriteJob = scope.launch {
@@ -186,7 +186,7 @@ class PairingWriteCoordinator(
 
             AppLogger.d(
                 LogTags.INI,
-                "write queue | firing\ncontrollers:\n${snapshot.controllers.toLogBlock()}"
+                "write queue | firing\ncontrollers:\n${snapshot.controllers.toControllerInfoList().toLogBlock()}"
             )
 
             val result = write(snapshot)
@@ -225,3 +225,5 @@ class PairingWriteCoordinator(
         )
     }
 }
+
+private fun List<MappedController>.toControllerInfoList() = map { it.controller }

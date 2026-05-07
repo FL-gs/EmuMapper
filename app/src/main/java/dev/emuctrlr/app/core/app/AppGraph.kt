@@ -5,6 +5,7 @@ import dev.emuctrlr.app.PairingApplication
 import dev.emuctrlr.app.core.domain.controllers.DefaultControllerAssignmentService
 import dev.emuctrlr.app.core.domain.controllers.InternalControllerClassifier
 import dev.emuctrlr.app.core.domain.controllers.DefaultControllerScanner
+import dev.emuctrlr.app.core.input.mapping.ControllerMappingResolver
 import dev.emuctrlr.app.core.pairing.DefaultVisibleControllersResolver
 import dev.emuctrlr.app.core.pairing.write.DefaultWritePolicy
 import dev.emuctrlr.app.core.pairing.write.IniConfigWriter
@@ -20,6 +21,7 @@ class AppGraph(context: Context) {
     private val controllerScanner = DefaultControllerScanner()
     private val controllerClassifier = InternalControllerClassifier()
     private val visibleControllersResolver = DefaultVisibleControllersResolver()
+    private val controllerMappingResolver = ControllerMappingResolver()
     private val writePolicy = DefaultWritePolicy()
     private val configWriter = IniConfigWriter()
 
@@ -33,6 +35,7 @@ class AppGraph(context: Context) {
         context = appContext,
         settingsRepository = settingsRepository,
         controllerAssignmentService = controllerAssignmentService,
+        controllerMappingResolver = controllerMappingResolver,
         writePolicy = writePolicy,
         configWriter = configWriter
     )

@@ -1,6 +1,6 @@
 package dev.emuctrlr.app.data.ini
 
-import dev.emuctrlr.app.core.input.ControllerInfo
+import dev.emuctrlr.app.core.input.mapping.MappedController
 import dev.emuctrlr.app.core.utils.AppLogger
 import dev.emuctrlr.app.core.utils.LogTags
 
@@ -8,11 +8,14 @@ object IniLog {
 
     private const val VERBOSE = false
 
-    private fun List<ControllerInfo>.toControllerBlock(): String {
+    private fun List<MappedController>.toControllerBlock(): String {
         if (isEmpty()) return "  - none"
 
-        return mapIndexed { index, controller ->
-            "  - P${index + 1} ${controller.name} | dev=${controller.deviceId} | num=${controller.controllerNumber ?: "-"} | desc=${controller.descriptor?.take(8) ?: "-"}"
+        return mapIndexed { index, mapped ->
+            val controller = mapped.controller
+            val mappingHash = mapped.mapping.stableHash().take(12)
+
+            "  - P${index + 1} ${controller.name} | dev=${controller.deviceId} | num=${controller.controllerNumber ?: "-"} | desc=${controller.descriptor?.take(8) ?: "-"} | mapping=${mapped.mappingKey} | mapHash=$mappingHash"
         }.joinToString(separator = "\n")
     }
 
@@ -26,7 +29,7 @@ object IniLog {
 
     fun writeRequest(
         enabledEmulators: Set<String>,
-        controllers: List<ControllerInfo>
+        controllers: List<MappedController>
     ) {
         AppLogger.d(
             LogTags.INI,
