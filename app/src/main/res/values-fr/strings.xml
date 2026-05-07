@@ -46,10 +46,11 @@
 
     <string name="controllers_saved">Configurations enregistrées</string>
     <string name="hold">Maintenir</string>
-    <string name="to_write">pour écrire</string>
+    <string name="to_write">pour écrire (J1)</string>
     <string name="hint_settings">Paramètres</string>
     <string name="hint_hold_to_write">Maintenir pour écrire</string>
 
+    <string name="debug_contact_me">Contact :</string>
     <string name="no_emulator_enabled">Au moins un émulateur doit être activé dans les paramètres</string>
     <string name="connect_controllers_hint">Connectez des manettes\npour les détecter automatiquement</string>
     <string name="player_format">Joueur %1$d</string>
