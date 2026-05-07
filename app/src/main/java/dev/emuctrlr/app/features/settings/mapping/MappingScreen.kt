@@ -1,5 +1,6 @@
 package dev.emuctrlr.app.features.settings.mapping
 
+import android.os.SystemClock
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,8 +9,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -52,15 +54,26 @@ import dev.emuctrlr.app.core.input.ControllerInfo
 import dev.emuctrlr.app.core.input.mapping.ControllerMapping
 import dev.emuctrlr.app.core.input.mapping.ControllerMappingResolver
 import dev.emuctrlr.app.core.input.mapping.EmuControl
+import dev.emuctrlr.app.core.input.mapping.InputBinding
 import dev.emuctrlr.app.core.input.mapping.MappingProfiles
 import dev.emuctrlr.app.core.input.mapping.mappingProfileKey
 import dev.emuctrlr.app.core.ui.components.ActionButton
+import dev.emuctrlr.app.core.ui.components.AppDialog
 import dev.emuctrlr.app.core.ui.components.AppSettingsFocusZone
 import dev.emuctrlr.app.core.ui.components.HintBarState
 import dev.emuctrlr.app.core.ui.components.SectionDivider
 import dev.emuctrlr.app.features.components.DevicePickerKeyMode
 import dev.emuctrlr.app.features.components.DevicePickerViewModel
 import dev.emuctrlr.app.features.components.SelectionDialog
+import kotlinx.coroutines.delay
+
+private const val BUTTON_CAPTURE_TIMEOUT_MS = 3_000L
+private const val BUTTON_CAPTURE_TICK_MS = 100L
+
+private data class CaptureRequest(
+    val controllerName: String,
+    val control: EmuControl
+)
 
 @Suppress("UNUSED_PARAMETER")
 @Composable
@@ -68,6 +81,8 @@ fun MappingScreen(
     active: Boolean,
     visibleControllers: List<ControllerInfo>,
     controllerMappingOverrides: Map<String, ControllerMapping>,
+    onSetControllerMappingBinding: (String, EmuControl, InputBinding?) -> Unit,
+    onResetControllerMapping: (String) -> Unit,
     onHintStateChanged: (HintBarState) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -79,9 +94,15 @@ fun MappingScreen(
     val controllers by pickerViewModel.controllers.collectAsState()
 
     val controllerFocusRequester = remember { FocusRequester() }
+    val resetFocusRequester = remember { FocusRequester() }
     val controls = remember {
         EmuControl.editableControls.filterNot { control ->
-            control == EmuControl.LEFT_STICK || control == EmuControl.RIGHT_STICK
+            control == EmuControl.LEFT_STICK ||
+                    control == EmuControl.RIGHT_STICK ||
+                    control == EmuControl.DPAD_UP ||
+                    control == EmuControl.DPAD_DOWN ||
+                    control == EmuControl.DPAD_LEFT ||
+                    control == EmuControl.DPAD_RIGHT
         }
     }
     val changeFocusRequesters = remember {
@@ -92,6 +113,9 @@ fun MappingScreen(
     val defaultLabel = stringResource(R.string.mapping_profile_default)
 
     var selectedControllerKey by rememberSaveable { mutableStateOf<String?>(null) }
+    var captureRequest by remember { mutableStateOf<CaptureRequest?>(null) }
+    var focusAfterDialogIndex by remember { mutableStateOf<Int?>(null) }
+    var focusControllerAfterReset by remember { mutableStateOf(false) }
 
     LaunchedEffect(defaultLabel) {
         pickerViewModel.refresh(
@@ -100,9 +124,27 @@ fun MappingScreen(
         )
     }
 
-    LaunchedEffect(active, showControllerDialog) {
-        if (active && !showControllerDialog) {
+    LaunchedEffect(focusControllerAfterReset) {
+        if (focusControllerAfterReset) {
+            delay(80)
+            focusControllerAfterReset = false
             controllerFocusRequester.requestFocus()
+        }
+    }
+
+    LaunchedEffect(active, showControllerDialog, captureRequest) {
+        if (active && !showControllerDialog && captureRequest == null) {
+            val rowIndexToRestore = focusAfterDialogIndex
+            focusAfterDialogIndex = null
+
+            delay(50)
+
+            if (rowIndexToRestore != null) {
+                changeFocusRequesters.getOrNull(rowIndexToRestore)?.requestFocus()
+            } else {
+                controllerFocusRequester.requestFocus()
+            }
+
             onHintStateChanged(
                 HintBarState.AppSettings(AppSettingsFocusZone.CONTROLLER_BUTTON)
             )
@@ -122,6 +164,10 @@ fun MappingScreen(
         controllers.firstOrNull { it.mappingProfileKey() == key }
     }
 
+    val selectedControllerMappingKey = selectedController?.mappingProfileKey()
+    val hasCustomMapping = selectedControllerMappingKey != null &&
+            controllerMappingOverrides.containsKey(selectedControllerMappingKey)
+
     val mapping = selectedController?.let { controller ->
         resolver.resolve(
             controller = controller,
@@ -130,6 +176,8 @@ fun MappingScreen(
     } ?: MappingProfiles.androidStandard
 
     val selectedControllerLabel = selectedController?.name ?: defaultLabel
+    val mappingEditable = active && selectedController != null
+    val resetActive = active && selectedController != null && hasCustomMapping
 
     Box(
         modifier = modifier.fillMaxSize(),
@@ -158,7 +206,7 @@ fun MappingScreen(
                 Text(
                     text = stringResource(R.string.mapping_subtitle),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f)
                 )
 
                 Spacer(Modifier.height(10.dp))
@@ -168,7 +216,11 @@ fun MappingScreen(
                     selected = false,
                     active = active,
                     focusRequester = controllerFocusRequester,
-                    nextFocusRequester = changeFocusRequesters.firstOrNull(),
+                    nextFocusRequester = when {
+                        resetActive -> resetFocusRequester
+                        mappingEditable -> changeFocusRequesters.firstOrNull()
+                        else -> null
+                    },
                     onFocused = {
                         onHintStateChanged(
                             HintBarState.AppSettings(AppSettingsFocusZone.CONTROLLER_BUTTON)
@@ -182,35 +234,71 @@ fun MappingScreen(
                     }
                 )
 
+                if (selectedController != null) {
+                    Spacer(Modifier.height(6.dp))
+
+                    MappingResetButton(
+                        text = stringResource(R.string.mapping_reset_layout),
+                        active = resetActive,
+                        focusRequester = resetFocusRequester,
+                        previousFocusRequester = controllerFocusRequester,
+                        nextFocusRequester = changeFocusRequesters.firstOrNull(),
+                        onFocused = {
+                            onHintStateChanged(
+                                HintBarState.AppSettings(AppSettingsFocusZone.CONTROLLER_BUTTON)
+                            )
+                        },
+                        onClick = {
+                            val controller = selectedController ?: return@MappingResetButton
+
+                            onResetControllerMapping(controller.name)
+                            focusControllerAfterReset = true
+                        }
+                    )
+                }
+
                 SectionDivider()
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(280.dp)
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    controls.forEachIndexed { index, control ->
-                        MappingBindingRow(
-                            controlLabel = control.displayName,
-                            bindingLabel = mapping.bindingFor(control)?.displayLabel()
-                                ?: stringResource(R.string.mapping_not_mapped),
-                            actionLabel = stringResource(R.string.mapping_change),
-                            active = active,
-                            focusRequester = changeFocusRequesters[index],
-                            previousFocusRequester = if (index == 0) {
-                                controllerFocusRequester
-                            } else {
-                                changeFocusRequesters[index - 1]
-                            },
-                            nextFocusRequester = changeFocusRequesters.getOrNull(index + 1),
-                            onFocused = {
-                                onHintStateChanged(
-                                    HintBarState.AppSettings(AppSettingsFocusZone.CONTROLLER_BUTTON)
-                                )
-                            }
-                        )
+                if (selectedController == null) {
+                    SelectControllerFirstState()
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(280.dp)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        controls.forEachIndexed { index, control ->
+                            MappingBindingRow(
+                                controlLabel = control.displayName,
+                                bindingLabel = mapping.bindingFor(control)?.displayLabel()
+                                    ?: stringResource(R.string.mapping_not_mapped),
+                                actionLabel = stringResource(R.string.mapping_change),
+                                active = mappingEditable,
+                                focusRequester = changeFocusRequesters[index],
+                                previousFocusRequester = if (index == 0) {
+                                    if (resetActive) resetFocusRequester else controllerFocusRequester
+                                } else {
+                                    changeFocusRequesters[index - 1]
+                                },
+                                nextFocusRequester = changeFocusRequesters.getOrNull(index + 1),
+                                onFocused = {
+                                    onHintStateChanged(
+                                        HintBarState.AppSettings(AppSettingsFocusZone.CONTROLLER_BUTTON)
+                                    )
+                                },
+                                onClick = {
+                                    val controller = selectedController ?: return@MappingBindingRow
+
+                                    focusAfterDialogIndex = index
+                                    captureRequest = CaptureRequest(
+                                        controllerName = controller.name,
+                                        control = control
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -231,6 +319,123 @@ fun MappingScreen(
             }
         )
     }
+
+    captureRequest?.let { request ->
+        ButtonCaptureDialog(
+            controllerName = request.controllerName,
+            control = request.control,
+            timeoutMs = BUTTON_CAPTURE_TIMEOUT_MS,
+            onDismiss = {
+                captureRequest = null
+            },
+            onTimeout = {
+                captureRequest = null
+            },
+            onCaptured = { binding ->
+                onSetControllerMappingBinding(
+                    request.controllerName,
+                    request.control,
+                    binding
+                )
+                captureRequest = null
+            }
+        )
+    }
+}
+
+@Composable
+private fun SelectControllerFirstState() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(280.dp)
+            .padding(horizontal = 12.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.mapping_select_controller_first_title),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(Modifier.height(6.dp))
+
+        Text(
+            text = stringResource(R.string.mapping_select_controller_first_subtitle),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.58f),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun MappingResetButton(
+    text: String,
+    active: Boolean,
+    focusRequester: FocusRequester,
+    previousFocusRequester: FocusRequester?,
+    nextFocusRequester: FocusRequester?,
+    onFocused: () -> Unit,
+    onClick: () -> Unit
+) {
+    var isFocused by remember { mutableStateOf(false) }
+
+    val textColor = when {
+        active && isFocused -> MaterialTheme.colorScheme.primary
+        active -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.72f)
+        else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.28f)
+    }
+
+    val fontWeight = if (active && isFocused) {
+        FontWeight.SemiBold
+    } else {
+        FontWeight.Normal
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .onFocusChanged {
+                isFocused = it.isFocused
+                if (it.isFocused) onFocused()
+            }
+            .focusRequester(focusRequester)
+            .focusProperties {
+                previousFocusRequester?.let { up = it }
+                nextFocusRequester?.let { down = it }
+            }
+            .onPreviewKeyEvent { event ->
+                if (!active) return@onPreviewKeyEvent false
+                if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
+
+                when (event.key) {
+                    Key.Enter,
+                    Key.DirectionCenter,
+                    Key.NumPadEnter,
+                    Key.ButtonA -> {
+                        onClick()
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+            .focusable(enabled = active)
+            .padding(vertical = 4.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Text(
+            text = text,
+            textAlign = TextAlign.End,
+            style = MaterialTheme.typography.bodyMedium,
+            color = textColor,
+            fontWeight = fontWeight
+        )
+    }
 }
 
 @Composable
@@ -242,7 +447,8 @@ private fun MappingBindingRow(
     focusRequester: FocusRequester,
     previousFocusRequester: FocusRequester?,
     nextFocusRequester: FocusRequester?,
-    onFocused: () -> Unit
+    onFocused: () -> Unit,
+    onClick: () -> Unit
 ) {
     var rowFocused by remember { mutableStateOf(false) }
 
@@ -277,7 +483,8 @@ private fun MappingBindingRow(
                 if (focused) {
                     onFocused()
                 }
-            }
+            },
+            onClick = onClick
         )
     }
 }
@@ -289,7 +496,8 @@ private fun MappingChangeButton(
     focusRequester: FocusRequester,
     previousFocusRequester: FocusRequester?,
     nextFocusRequester: FocusRequester?,
-    onFocusChanged: (Boolean) -> Unit
+    onFocusChanged: (Boolean) -> Unit,
+    onClick: () -> Unit
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
@@ -325,7 +533,10 @@ private fun MappingChangeButton(
                     Key.Enter,
                     Key.DirectionCenter,
                     Key.NumPadEnter,
-                    Key.ButtonA -> true
+                    Key.ButtonA -> {
+                        onClick()
+                        true
+                    }
 
                     else -> false
                 }
@@ -342,6 +553,96 @@ private fun MappingChangeButton(
             fontWeight = fontWeight
         )
     }
+}
+
+@Composable
+private fun ButtonCaptureDialog(
+    controllerName: String,
+    control: EmuControl,
+    timeoutMs: Long,
+    onDismiss: () -> Unit,
+    onTimeout: () -> Unit,
+    onCaptured: (InputBinding.Button) -> Unit
+) {
+    val focusRequester = remember { FocusRequester() }
+    var remainingMs by remember(control) { mutableLongStateOf(timeoutMs) }
+
+    val captureMessage = stringResource(
+        R.string.mapping_capture_message,
+        control.displayName
+    )
+
+    LaunchedEffect(control) {
+        delay(50)
+        focusRequester.requestFocus()
+
+        val startMs = SystemClock.elapsedRealtime()
+
+        while (true) {
+            val elapsedMs = SystemClock.elapsedRealtime() - startMs
+            val nextRemainingMs = (timeoutMs - elapsedMs).coerceAtLeast(0L)
+            remainingMs = nextRemainingMs
+
+            if (nextRemainingMs <= 0L) break
+
+            delay(BUTTON_CAPTURE_TICK_MS)
+        }
+
+        onTimeout()
+    }
+
+    AppDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = controllerName,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        },
+        text = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester)
+                    .focusable()
+                    .onPreviewKeyEvent { event ->
+                        if (event.type != KeyEventType.KeyDown) {
+                            return@onPreviewKeyEvent true
+                        }
+
+                        val keyCode = event.nativeKeyEvent.keyCode
+
+                        onCaptured(
+                            InputBinding.Button(keyCode = keyCode)
+                        )
+
+                        true
+                    }
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = captureMessage,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Spacer(Modifier.height(20.dp))
+
+                    Text(
+                        text = ((remainingMs + 999L) / 1_000L).toString(),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.End,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.58f)
+                    )
+                }
+            }
+        }
+    )
 }
 
 @Composable

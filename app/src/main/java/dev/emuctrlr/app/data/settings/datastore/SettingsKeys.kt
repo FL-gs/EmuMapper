@@ -15,7 +15,8 @@ object SettingsKeys {
 
     val WRITE_MODE = stringPreferencesKey("write_mode")
 
-    val CONTROLLER_MAPPING_OVERRIDES_JSON = stringPreferencesKey("controller_mapping_overrides_json")
+    val CONTROLLER_MAPPING_OVERRIDES_JSON =
+        stringPreferencesKey("controller_mapping_overrides_json")
 
     val DEBUG_LOGS = booleanPreferencesKey("debug_logs")
 }

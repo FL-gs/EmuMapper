@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mapping_capture_message">Press the button to use for %1$s.</string>
+    <string name="mapping_capture_timeout">Timeout in %1$d s</string>
+    <string name="mapping_select_controller_first_title">Select a controller first</string>
+    <string name="mapping_select_controller_first_subtitle">Choose a controller above to view and change its buttons.</string>
+</resources>

@@ -21,6 +21,8 @@ import dev.emuctrlr.app.core.input.ControllerInfo
 import dev.emuctrlr.app.core.input.PadKey
 import dev.emuctrlr.app.core.input.mapKeyEvent
 import dev.emuctrlr.app.core.input.mapping.ControllerMapping
+import dev.emuctrlr.app.core.input.mapping.EmuControl
+import dev.emuctrlr.app.core.input.mapping.InputBinding
 import dev.emuctrlr.app.core.settings.AppLanguage
 import dev.emuctrlr.app.core.settings.WriteMode
 import dev.emuctrlr.app.core.ui.components.HintBarState
@@ -60,6 +62,8 @@ fun SettingsHomeScreen(
     onSetInternalController: (String?) -> Unit,
     visibleControllers: List<ControllerInfo>,
     controllerMappingOverrides: Map<String, ControllerMapping>,
+    onSetControllerMappingBinding: (String, EmuControl, InputBinding?) -> Unit,
+    onResetControllerMapping: (String) -> Unit,
     debugLogs: Boolean,
     onSetDebugLogs: (Boolean) -> Unit,
     onClearLogs: () -> Unit,
@@ -194,6 +198,8 @@ fun SettingsHomeScreen(
                         active = (mode == SettingsMode.CATEGORY),
                         visibleControllers = visibleControllers,
                         controllerMappingOverrides = controllerMappingOverrides,
+                        onSetControllerMappingBinding = onSetControllerMappingBinding,
+                        onResetControllerMapping = onResetControllerMapping,
                         onHintStateChanged = { state ->
                             if (mode == SettingsMode.CATEGORY) {
                                 contentHintState = state

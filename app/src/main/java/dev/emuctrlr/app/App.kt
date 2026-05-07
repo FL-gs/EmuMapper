@@ -101,6 +101,8 @@ fun App() {
                     onSetInternalController = viewModel::setInternalController,
                     visibleControllers = visibleControllers,
                     controllerMappingOverrides = s.controllerMappingOverrides,
+                    onSetControllerMappingBinding = viewModel::setControllerMappingBinding,
+                    onResetControllerMapping = viewModel::resetControllerMapping,
                     debugLogs = s.debugLogs,
                     onSetDebugLogs = viewModel::setDebugLogs,
                     onClearLogs = viewModel::clearLogs,

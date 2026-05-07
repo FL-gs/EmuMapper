@@ -13,6 +13,8 @@ import androidx.navigation.compose.rememberNavController
 import dev.emuctrlr.app.core.app.appGraph
 import dev.emuctrlr.app.core.input.ControllerInfo
 import dev.emuctrlr.app.core.input.mapping.ControllerMapping
+import dev.emuctrlr.app.core.input.mapping.EmuControl
+import dev.emuctrlr.app.core.input.mapping.InputBinding
 import dev.emuctrlr.app.core.settings.AppLanguage
 import dev.emuctrlr.app.core.settings.WriteMode
 import dev.emuctrlr.app.core.utils.AppLogger
@@ -39,6 +41,8 @@ fun AppNavHost(
     internalController: String?,
     visibleControllers: List<ControllerInfo>,
     controllerMappingOverrides: Map<String, ControllerMapping>,
+    onSetControllerMappingBinding: (String, EmuControl, InputBinding?) -> Unit,
+    onResetControllerMapping: (String) -> Unit,
     debugLogs: Boolean,
     onSetDebugLogs: (Boolean) -> Unit,
     onClearLogs: () -> Unit,
@@ -139,6 +143,8 @@ fun AppNavHost(
                 onSetInternalController = onSetInternalController,
                 visibleControllers = visibleControllers,
                 controllerMappingOverrides = controllerMappingOverrides,
+                onSetControllerMappingBinding = onSetControllerMappingBinding,
+                onResetControllerMapping = onResetControllerMapping,
                 debugLogs = debugLogs,
                 onSetDebugLogs = onSetDebugLogs,
                 onClearLogs = onClearLogs,

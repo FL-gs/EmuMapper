@@ -2,7 +2,6 @@ package dev.emuctrlr.app.core.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.emuctrlr.app.core.input.mapping.ControllerMapping
 import dev.emuctrlr.app.core.input.mapping.EmuControl
 import dev.emuctrlr.app.core.input.mapping.InputBinding
 import dev.emuctrlr.app.core.settings.AppLanguage
@@ -44,24 +43,6 @@ class AppViewModel(
     fun setInternalController(value: String?) {
         viewModelScope.launch {
             repo.setInternalController(value)
-        }
-    }
-
-    fun setControllerMappingOverrides(value: Map<String, ControllerMapping>) {
-        viewModelScope.launch {
-            repo.setControllerMappingOverrides(value)
-        }
-    }
-
-    fun setControllerMappingOverride(
-        controllerName: String,
-        mapping: ControllerMapping?
-    ) {
-        viewModelScope.launch {
-            repo.setControllerMappingOverride(
-                controllerName = controllerName,
-                mapping = mapping
-            )
         }
     }
 

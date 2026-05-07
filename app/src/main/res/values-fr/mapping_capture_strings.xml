@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mapping_capture_message">Appuyez sur la touche à utiliser pour %1$s.</string>
+    <string name="mapping_capture_timeout">Expiration dans %1$d s</string>
+    <string name="mapping_select_controller_first_title">Sélectionnez d’abord une manette</string>
+    <string name="mapping_select_controller_first_subtitle">Choisissez une manette ci-dessus pour afficher et modifier ses touches.</string>
+</resources>
