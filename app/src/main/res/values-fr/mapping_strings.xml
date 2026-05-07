@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_category_mapping">Mapping</string>
+
+    <string name="mapping_title">Configuration des touches</string>
+    <string name="mapping_subtitle">Si le layout par défaut d’une manette n’est pas correct, sélectionnez-la ici et modifiez les touches.</string>
+    <string name="mapping_controller_dialog_title">Sélectionner une manette</string>
+    <string name="mapping_profile_default">Default</string>
+    <string name="mapping_change">Modifier</string>
+    <string name="mapping_not_mapped">Non mappé</string>
+</resources>

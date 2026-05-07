@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_category_mapping">Mapping</string>
+
+    <string name="mapping_title">Mapping controller</string>
+    <string name="mapping_subtitle">If a controller’s default layout is not correct, select it here and change the buttons.</string>
+    <string name="mapping_controller_dialog_title">Select a controller</string>
+    <string name="mapping_profile_default">Default</string>
+    <string name="mapping_change">Change</string>
+    <string name="mapping_not_mapped">Not mapped</string>
+</resources>

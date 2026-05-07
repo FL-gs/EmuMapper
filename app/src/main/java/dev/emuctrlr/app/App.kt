@@ -37,6 +37,7 @@ fun App() {
     )
 
     val settings by viewModel.settings.collectAsState(initial = null)
+    val visibleControllers by pairingEngine.visibleControllers.collectAsState()
 
     if (settings == null) {
         Surface(
@@ -98,6 +99,8 @@ fun App() {
                     onboardingDone = s.onboardingDone,
                     internalController = s.internalController,
                     onSetInternalController = viewModel::setInternalController,
+                    visibleControllers = visibleControllers,
+                    controllerMappingOverrides = s.controllerMappingOverrides,
                     debugLogs = s.debugLogs,
                     onSetDebugLogs = viewModel::setDebugLogs,
                     onClearLogs = viewModel::clearLogs,

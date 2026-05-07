@@ -11,6 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.emuctrlr.app.core.app.appGraph
+import dev.emuctrlr.app.core.input.ControllerInfo
+import dev.emuctrlr.app.core.input.mapping.ControllerMapping
 import dev.emuctrlr.app.core.settings.AppLanguage
 import dev.emuctrlr.app.core.settings.WriteMode
 import dev.emuctrlr.app.core.utils.AppLogger
@@ -35,6 +37,8 @@ fun AppNavHost(
     onSetWriteMode: (WriteMode) -> Unit,
     onboardingDone: Boolean,
     internalController: String?,
+    visibleControllers: List<ControllerInfo>,
+    controllerMappingOverrides: Map<String, ControllerMapping>,
     debugLogs: Boolean,
     onSetDebugLogs: (Boolean) -> Unit,
     onClearLogs: () -> Unit,
@@ -133,6 +137,8 @@ fun AppNavHost(
                 onSetEnabledEmulators = onSetEnabledEmulators,
                 internalController = internalController,
                 onSetInternalController = onSetInternalController,
+                visibleControllers = visibleControllers,
+                controllerMappingOverrides = controllerMappingOverrides,
                 debugLogs = debugLogs,
                 onSetDebugLogs = onSetDebugLogs,
                 onClearLogs = onClearLogs,

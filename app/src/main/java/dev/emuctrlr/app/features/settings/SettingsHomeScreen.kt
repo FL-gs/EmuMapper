@@ -17,8 +17,10 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
 import dev.emuctrlr.app.R
+import dev.emuctrlr.app.core.input.ControllerInfo
 import dev.emuctrlr.app.core.input.PadKey
 import dev.emuctrlr.app.core.input.mapKeyEvent
+import dev.emuctrlr.app.core.input.mapping.ControllerMapping
 import dev.emuctrlr.app.core.settings.AppLanguage
 import dev.emuctrlr.app.core.settings.WriteMode
 import dev.emuctrlr.app.core.ui.components.HintBarState
@@ -28,10 +30,12 @@ import dev.emuctrlr.app.features.settings.debug.DebugScreen
 import dev.emuctrlr.app.features.settings.emulators.EmulatorsScreen
 import dev.emuctrlr.app.features.settings.layout.SettingsLayout
 import dev.emuctrlr.app.features.settings.layout.SettingsSidebar
+import dev.emuctrlr.app.features.settings.mapping.MappingScreen
 
 private enum class SettingsCategory(@get:StringRes val labelRes: Int) {
     APPEARANCE(R.string.settings_category_App),
     EMULATORS(R.string.settings_category_emulators),
+    MAPPING(R.string.settings_category_mapping),
     DEBUG(R.string.settings_category_debug)
 }
 
@@ -54,6 +58,8 @@ fun SettingsHomeScreen(
     onSetWriteMode: (WriteMode) -> Unit,
     internalController: String?,
     onSetInternalController: (String?) -> Unit,
+    visibleControllers: List<ControllerInfo>,
+    controllerMappingOverrides: Map<String, ControllerMapping>,
     debugLogs: Boolean,
     onSetDebugLogs: (Boolean) -> Unit,
     onClearLogs: () -> Unit,
@@ -175,6 +181,19 @@ fun SettingsHomeScreen(
                         active = (mode == SettingsMode.CATEGORY),
                         enabledPackages = enabledEmulators,
                         onSetEnabledPackages = onSetEnabledEmulators,
+                        onHintStateChanged = { state ->
+                            if (mode == SettingsMode.CATEGORY) {
+                                contentHintState = state
+                            }
+                        }
+                    )
+                }
+
+                SettingsCategory.MAPPING -> {
+                    MappingScreen(
+                        active = (mode == SettingsMode.CATEGORY),
+                        visibleControllers = visibleControllers,
+                        controllerMappingOverrides = controllerMappingOverrides,
                         onHintStateChanged = { state ->
                             if (mode == SettingsMode.CATEGORY) {
                                 contentHintState = state
