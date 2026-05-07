@@ -140,7 +140,8 @@ class PairingEngine(
 
         val writeRelevantSettingsChanged =
             previousSettings.writeMode != settings.writeMode ||
-                    previousSettings.enabledEmulators != settings.enabledEmulators
+                    previousSettings.enabledEmulators != settings.enabledEmulators ||
+                    previousSettings.controllerMappingOverrides != settings.controllerMappingOverrides
 
         val debugLogsJustEnabled =
             !previousSettings.debugLogs && settings.debugLogs
@@ -228,7 +229,10 @@ class PairingEngine(
     private fun resolveMappedControllers(
         controllers: List<ControllerInfo>
     ): List<MappedController> {
-        return controllerMappingResolver.resolveAll(controllers)
+        return controllerMappingResolver.resolveAll(
+            controllers = controllers,
+            userOverridesByName = currentSettings.controllerMappingOverrides
+        )
     }
 
     private fun scheduleResync(reason: String) {

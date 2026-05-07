@@ -7,11 +7,15 @@ import dev.emuctrlr.app.core.input.ControllerInfo
  *
  * mapping final = mapping par défaut + overrides utilisateur
  *
+ * Les overrides sont passés au moment de la résolution pour suivre les changements
+ * DataStore sans recréer le resolver.
  */
-class ControllerMappingResolver(
-    private val userOverridesByName: Map<String, ControllerMapping> = emptyMap()
-) {
-    fun resolve(controller: ControllerInfo): ControllerMapping {
+class ControllerMappingResolver {
+
+    fun resolve(
+        controller: ControllerInfo,
+        userOverridesByName: Map<String, ControllerMapping> = emptyMap()
+    ): ControllerMapping {
         val key = controller.mappingProfileKey()
 
         val defaultMapping = DefaultControllerMappings.resolveDefault(
@@ -23,11 +27,17 @@ class ControllerMappingResolver(
         )
     }
 
-    fun resolveAll(controllers: List<ControllerInfo>): List<MappedController> {
+    fun resolveAll(
+        controllers: List<ControllerInfo>,
+        userOverridesByName: Map<String, ControllerMapping> = emptyMap()
+    ): List<MappedController> {
         return controllers.map { controller ->
             MappedController(
                 controller = controller,
-                mapping = resolve(controller)
+                mapping = resolve(
+                    controller = controller,
+                    userOverridesByName = userOverridesByName
+                )
             )
         }
     }

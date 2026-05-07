@@ -1,8 +1,14 @@
 package dev.emuctrlr.app.data.settings
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import dev.emuctrlr.app.core.input.mapping.ControllerMapping
+import dev.emuctrlr.app.core.input.mapping.ControllerMappingOverridesCodec
+import dev.emuctrlr.app.core.input.mapping.EmuControl
+import dev.emuctrlr.app.core.input.mapping.InputBinding
+import dev.emuctrlr.app.core.input.mapping.toMappingProfileKey
 import dev.emuctrlr.app.core.settings.AppLanguage
 import dev.emuctrlr.app.core.settings.WriteMode
 import dev.emuctrlr.app.data.settings.datastore.SettingsKeys
@@ -23,6 +29,10 @@ class AppSettingsRepository(
             )
         }.getOrElse { WriteMode.MANUAL }
 
+        val controllerMappingOverrides = ControllerMappingOverridesCodec.decode(
+            prefs[SettingsKeys.CONTROLLER_MAPPING_OVERRIDES_JSON]
+        )
+
         AppSettings(
             darkTheme = prefs[SettingsKeys.DARK_THEME] ?: false,
             language = lang,
@@ -30,6 +40,7 @@ class AppSettingsRepository(
             writeMode = writeMode,
             onboardingDone = prefs[SettingsKeys.ONBOARDING_DONE] ?: false,
             internalController = prefs[SettingsKeys.INTERNAL_CONTROLLER],
+            controllerMappingOverrides = controllerMappingOverrides,
             debugLogs = prefs[SettingsKeys.DEBUG_LOGS] ?: false,
         )
     }
@@ -64,7 +75,98 @@ class AppSettingsRepository(
         }
     }
 
+    suspend fun setControllerMappingOverrides(value: Map<String, ControllerMapping>) {
+        dataStore.edit { prefs ->
+            writeControllerMappingOverrides(
+                prefs = prefs,
+                value = value
+            )
+        }
+    }
+
+    suspend fun setControllerMappingOverride(
+        controllerName: String,
+        mapping: ControllerMapping?
+    ) {
+        dataStore.edit { prefs ->
+            val current = ControllerMappingOverridesCodec.decode(
+                prefs[SettingsKeys.CONTROLLER_MAPPING_OVERRIDES_JSON]
+            ).toMutableMap()
+
+            val key = controllerName.toMappingProfileKey()
+
+            if (mapping == null || mapping.bindings.isEmpty()) {
+                current.remove(key)
+            } else {
+                current[key] = mapping
+            }
+
+            writeControllerMappingOverrides(
+                prefs = prefs,
+                value = current
+            )
+        }
+    }
+
+    suspend fun setControllerMappingBinding(
+        controllerName: String,
+        control: EmuControl,
+        binding: InputBinding?
+    ) {
+        dataStore.edit { prefs ->
+            val current = ControllerMappingOverridesCodec.decode(
+                prefs[SettingsKeys.CONTROLLER_MAPPING_OVERRIDES_JSON]
+            ).toMutableMap()
+
+            val key = controllerName.toMappingProfileKey()
+            val currentMapping = current[key] ?: ControllerMapping(emptyMap())
+
+            val updatedMapping = if (binding == null) {
+                currentMapping.withoutBinding(control)
+            } else {
+                currentMapping.withBinding(
+                    control = control,
+                    binding = binding
+                )
+            }
+
+            if (updatedMapping.bindings.isEmpty()) {
+                current.remove(key)
+            } else {
+                current[key] = updatedMapping
+            }
+
+            writeControllerMappingOverrides(
+                prefs = prefs,
+                value = current
+            )
+        }
+    }
+
+    suspend fun resetControllerMapping(controllerName: String) {
+        setControllerMappingOverride(
+            controllerName = controllerName,
+            mapping = null
+        )
+    }
+
     suspend fun setDebugLogs(enabled: Boolean) {
         dataStore.edit { it[SettingsKeys.DEBUG_LOGS] = enabled }
+    }
+
+    private fun writeControllerMappingOverrides(
+        prefs: MutablePreferences,
+        value: Map<String, ControllerMapping>
+    ) {
+        val normalized = value
+            .mapKeys { (name, _) -> name.toMappingProfileKey() }
+            .filterValues { it.bindings.isNotEmpty() }
+
+        if (normalized.isEmpty()) {
+            prefs.remove(SettingsKeys.CONTROLLER_MAPPING_OVERRIDES_JSON)
+        } else {
+            prefs[SettingsKeys.CONTROLLER_MAPPING_OVERRIDES_JSON] =
+                ControllerMappingOverridesCodec.encode(normalized)
+        }
     }
 }
