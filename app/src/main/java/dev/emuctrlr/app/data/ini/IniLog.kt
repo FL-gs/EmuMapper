@@ -13,9 +13,8 @@ object IniLog {
 
         return mapIndexed { index, mapped ->
             val controller = mapped.controller
-            val mappingHash = mapped.mapping.stableHash().take(12)
 
-            "  - P${index + 1} ${controller.name} | dev=${controller.deviceId} | num=${controller.controllerNumber ?: "-"} | desc=${controller.descriptor?.take(8) ?: "-"} | mapping=${mapped.mappingKey} | mapHash=$mappingHash"
+            "  - P${index + 1} ${controller.name} | dev=${controller.deviceId} | num=${controller.controllerNumber ?: "-"} | desc=${controller.descriptor?.take(8) ?: "-"}"
         }.joinToString(separator = "\n")
     }
 

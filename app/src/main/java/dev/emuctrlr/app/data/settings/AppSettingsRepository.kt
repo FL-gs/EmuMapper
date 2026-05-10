@@ -20,7 +20,7 @@ class AppSettingsRepository(
 ) {
     val settings: Flow<AppSettings> = dataStore.data.map { prefs ->
         AppSettings(
-            darkTheme = prefs[SettingsKeys.DARK_THEME] ?: true,
+            darkTheme = prefs[SettingsKeys.DARK_THEME] ?: false,
             language = prefs[SettingsKeys.LANGUAGE]
                 ?.let { value -> runCatching { AppLanguage.valueOf(value) }.getOrNull() }
                 ?: AppLanguage.SYSTEM,

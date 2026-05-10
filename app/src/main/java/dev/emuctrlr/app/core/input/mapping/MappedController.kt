@@ -2,10 +2,8 @@ package dev.emuctrlr.app.core.input.mapping
 
 import dev.emuctrlr.app.core.input.ControllerInfo
 
-/**
- * Contrôleur visible + mapping résolu.
- *
- * Cette classe servira plus tard à remplacer List<ControllerInfo> dans le pipeline d'écriture.
+/*
+ * Manettes visible dans l'app + mapping final.
  */
 data class MappedController(
     val controller: ControllerInfo,
