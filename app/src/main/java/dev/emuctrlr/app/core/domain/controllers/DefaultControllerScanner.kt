@@ -15,6 +15,9 @@ class DefaultControllerScanner : ControllerScanner {
             .filter { it.isGamepadDevice() }
             .map { it.toControllerInfo() }
             .distinctBy { it.deduplicationKey() }
+            .mapIndexed { index, controller ->
+                controller.copy(yuzuPort = index)
+            }
             .toList()
     }
 }

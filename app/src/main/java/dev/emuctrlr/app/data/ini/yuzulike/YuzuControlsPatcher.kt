@@ -1,11 +1,12 @@
-package dev.emuctrlr.app.data.ini.eden
+package dev.emuctrlr.app.data.ini.yuzulike
 
-import dev.emuctrlr.app.core.input.deduplicationKey
 import dev.emuctrlr.app.core.input.mapping.EmuControl
 import dev.emuctrlr.app.core.input.mapping.InputBinding
 import dev.emuctrlr.app.core.input.mapping.MappedController
+import dev.emuctrlr.app.core.utils.AppLogger
+import dev.emuctrlr.app.core.utils.LogTags
 
-object EdenControlsPatcher {
+object YuzuControlsPatcher {
 
     private sealed interface LineEntry {
         data class Raw(val text: String) : LineEntry
@@ -68,8 +69,6 @@ object EdenControlsPatcher {
                 val rawValue = line.substring(separatorIndex + 1).trim()
 
                 if (keyIndex.containsKey(rawKey)) {
-                    // même comportement que ton ancien code:
-                    // on garde la première occurrence et on ignore les doublons
                     return@forEach
                 }
 
@@ -104,17 +103,22 @@ object EdenControlsPatcher {
 
     fun patchIni(
         original: String,
-        controllers: List<MappedController>,
-        edenDevices: List<EdenPortEntry>
+        controllers: List<MappedController>
     ): String {
         val (entries, keyIndex) = parseEntries(original)
-        val edenMap = edenDevices.associateBy { it.controller.deduplicationKey() }
 
         for (playerIndex in 0..9) {
             val mappedController = controllers.getOrNull(playerIndex)
-            val eden = mappedController?.controller?.let { edenMap[it.deduplicationKey()] }
+            val yuzuEntry = mappedController?.controller?.yuzuControllerEntryOrNull()
 
-            val connected = (mappedController != null && eden != null)
+            if (mappedController != null && yuzuEntry != null) {
+                AppLogger.d(
+                    LogTags.INI,
+                    "yuzu input | player=$playerIndex | name=${mappedController.controller.name} | port=${yuzuEntry.port} | guid=${yuzuEntry.guid}"
+                )
+            }
+
+            val connected = (mappedController != null && yuzuEntry != null)
 
             upsertLine(entries, keyIndex, "player_${playerIndex}_connected\\default", "false")
             upsertLine(
@@ -124,7 +128,7 @@ object EdenControlsPatcher {
                 if (connected) "true" else "false"
             )
 
-            if (!connected || mappedController == null || eden == null) {
+            if (mappedController == null || yuzuEntry == null) {
                 continue
             }
 
@@ -133,21 +137,21 @@ object EdenControlsPatcher {
                 keyIndex = keyIndex,
                 playerIndex = playerIndex,
                 mappedController = mappedController,
-                eden = eden
+                yuzuEntry = yuzuEntry
             )
         }
 
-        // Comportement conservé: player_8 reprend la config de player_0
+        // player_8 reprend la config de player_0.
         val p0 = controllers.getOrNull(0)
-        val eden0 = p0?.controller?.let { edenMap[it.deduplicationKey()] }
+        val p0yuzuEntry = p0?.controller?.yuzuControllerEntryOrNull()
 
-        if (p0 != null && eden0 != null) {
+        if (p0 != null && p0yuzuEntry != null) {
             writeControllerBindings(
                 entries = entries,
                 keyIndex = keyIndex,
                 playerIndex = 8,
                 mappedController = p0,
-                eden = eden0
+                yuzuEntry = p0yuzuEntry
             )
         }
 
@@ -176,11 +180,11 @@ object EdenControlsPatcher {
         keyIndex: MutableMap<String, Int>,
         playerIndex: Int,
         mappedController: MappedController,
-        eden: EdenPortEntry
+        yuzuEntry: YuzuControllerEntry
     ) {
-        val display = eden.display
-        val guid = eden.guid
-        val port = eden.port
+        val display = yuzuEntry.display
+        val guid = yuzuEntry.guid
+        val port = yuzuEntry.port
         val mapping = mappedController.mapping
 
         upsertControl(entries, keyIndex, playerIndex, "button_a", mapping.bindingFor(EmuControl.A), display, guid, port)

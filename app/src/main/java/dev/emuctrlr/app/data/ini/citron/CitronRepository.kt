@@ -3,8 +3,7 @@ package dev.emuctrlr.app.data.ini.citron
 import dev.emuctrlr.app.core.input.mapping.MappedController
 import dev.emuctrlr.app.data.ini.IniLog
 import dev.emuctrlr.app.data.ini.WriteResult
-import dev.emuctrlr.app.data.ini.eden.EdenControlsPatcher
-import dev.emuctrlr.app.data.ini.eden.EdenInputScanner
+import dev.emuctrlr.app.data.ini.yuzulike.YuzuControlsPatcher
 
 object CitronRepository {
 
@@ -23,12 +22,10 @@ object CitronRepository {
         }
 
         val original = file.readText()
-        val citronDevices = EdenInputScanner.scan()
 
-        val patched = EdenControlsPatcher.patchIni(
+        val patched = YuzuControlsPatcher.patchIni(
             original = original,
-            controllers = controllers,
-            edenDevices = citronDevices
+            controllers = controllers
         )
 
         if (patched != original) {

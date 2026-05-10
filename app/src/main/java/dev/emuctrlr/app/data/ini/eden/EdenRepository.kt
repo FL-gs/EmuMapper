@@ -3,6 +3,7 @@ package dev.emuctrlr.app.data.ini.eden
 import dev.emuctrlr.app.core.input.mapping.MappedController
 import dev.emuctrlr.app.data.ini.IniLog
 import dev.emuctrlr.app.data.ini.WriteResult
+import dev.emuctrlr.app.data.ini.yuzulike.YuzuControlsPatcher
 
 object EdenRepository {
 
@@ -21,12 +22,10 @@ object EdenRepository {
         }
 
         val original = file.readText()
-        val edenDevices = EdenInputScanner.scan()
 
-        val patched = EdenControlsPatcher.patchIni(
+        val patched = YuzuControlsPatcher.patchIni(
             original = original,
-            controllers = controllers,
-            edenDevices = edenDevices
+            controllers = controllers
         )
 
         if (patched != original) {

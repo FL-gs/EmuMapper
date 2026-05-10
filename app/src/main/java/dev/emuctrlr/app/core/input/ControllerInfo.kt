@@ -20,7 +20,10 @@ data class ControllerInfo(
     val controllerNumber: Int?,
     val vendorId: Int,
     val productId: Int,
-    val isInternal: Boolean = false
+    val isInternal: Boolean = false,
+
+    // Port Android/Yuzu-like utilisé par Eden/Citron
+    val yuzuPort: Int? = null
 )
 
 /**
