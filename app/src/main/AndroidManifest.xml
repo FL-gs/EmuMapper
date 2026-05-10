@@ -11,6 +11,7 @@
         <package android:name="org.dolphinemu.dolphinemu" />
         <package android:name="com.retroarch" />
         <package android:name="com.retroarch.aarch64" />
+        <package android:name="org.citron.citron_emu" />
     </queries>
 
     <application

@@ -4,6 +4,7 @@ import dev.emuctrlr.app.core.input.mapping.MappedController
 import dev.emuctrlr.app.core.utils.AppLogger
 import dev.emuctrlr.app.core.utils.LogTags
 import dev.emuctrlr.app.data.emulators.EmulatorCatalog
+import dev.emuctrlr.app.data.ini.citron.CitronRepository
 import dev.emuctrlr.app.data.ini.dolphin.DolphinRepository
 import dev.emuctrlr.app.data.ini.eden.EdenRepository
 import dev.emuctrlr.app.data.ini.retroarch.RetroArchRepository
@@ -46,6 +47,11 @@ object IniManager {
                     RetroArchRepository.configureRetroArch(
                         controllers = controllers.map { it.controller }
                     )
+                }
+
+                "citron" -> {
+                    IniLog.emulatorWriting("citron")
+                    CitronRepository.writeControllers(controllers)
                 }
 
                 else -> {

@@ -5,4 +5,6 @@ object EmulatorPackages {
     const val EDEN = "dev.eden.eden_emulator"
     const val RETROARCH_32 = "com.retroarch"
     const val RETROARCH_64 = "com.retroarch.aarch64"
+
+    const val CITRON = "org.citron.citron_emu"
 }

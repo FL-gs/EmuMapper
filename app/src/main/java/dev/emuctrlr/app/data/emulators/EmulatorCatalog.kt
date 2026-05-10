@@ -24,6 +24,12 @@ object EmulatorCatalog {
             iconRes = R.drawable.ic_emu_eden
         ),
         EmulatorDef(
+            id = "citron",
+            label = "Citron",
+            packageNames = listOf(EmulatorPackages.CITRON),
+            iconRes = R.drawable.ic_emu_citron
+        ),
+        EmulatorDef(
             id = "dolphin",
             label = "Dolphin",
             packageNames = listOf(EmulatorPackages.DOLPHIN),
