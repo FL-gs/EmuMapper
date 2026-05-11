@@ -101,6 +101,27 @@ object YuzuControlsPatcher {
         entries += LineEntry.KeyValue(key = key, value = value)
     }
 
+    private fun upsertInputAndDisableDefault(
+        entries: MutableList<LineEntry>,
+        keyIndex: MutableMap<String, Int>,
+        key: String,
+        value: String
+    ) {
+        upsertLine(
+            entries = entries,
+            keyIndex = keyIndex,
+            key = "$key\\default",
+            value = "false"
+        )
+
+        upsertLine(
+            entries = entries,
+            keyIndex = keyIndex,
+            key = key,
+            value = value
+        )
+    }
+
     fun patchIni(
         original: String,
         controllers: List<MappedController>
@@ -243,10 +264,12 @@ object YuzuControlsPatcher {
             null -> return
         }
 
-        upsertLine(
+        val key = "player_${playerIndex}_$keySuffix"
+
+        upsertInputAndDisableDefault(
             entries = entries,
             keyIndex = keyIndex,
-            key = "player_${playerIndex}_$keySuffix",
+            key = key,
             value = value
         )
     }
@@ -262,11 +285,12 @@ object YuzuControlsPatcher {
         port: Int
     ) {
         val stick = binding as? InputBinding.Stick ?: return
+        val key = "player_${playerIndex}_$keySuffix"
 
-        upsertLine(
+        upsertInputAndDisableDefault(
             entries = entries,
             keyIndex = keyIndex,
-            key = "player_${playerIndex}_$keySuffix",
+            key = key,
             value = stickValue(
                 axisX = stick.axisX,
                 axisY = stick.axisY,
