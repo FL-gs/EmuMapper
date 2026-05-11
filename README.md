@@ -1,4 +1,4 @@
-  <img src="./assets/main.gif" width="800"/>
+<img src="./assets/main.gif" width="800"/>
 
 ---
 
@@ -6,37 +6,35 @@
 
 EmuCtrlr is an Android app designed for Android handheld gaming devices such as Retroid or AYN consoles.
 
-It automatically manages controller assignments for emulators, enabling a seamless handheld ↔ docked experience.
+It manages controller assignments for emulators, enabling a seamless handheld ↔ docked experience.
 The app is designed for controller-based navigation and does not support touchscreen input.
-<p align="center">
 
 > [!IMPORTANT]
 > EmuCtrlr was originally made for personal use.
+>
+> I started learning Kotlin for this project, and I am still learning. I used LLMs to help with some features that were too challenging for me
+> 
 > I am currently refactoring it to support more devices, controllers, and emulator setups.
 >
-> Bugs may occur, and the app may not work correctly on every device or setup yet.
-
-
-> [!WARNING]
-> DualSense controllers are not supported yet.
-
-
-</p>
+> The app may not work correctly on every device or setup yet.
+> 
+> You can contact me on Discord: **fl.gs**
 
 ## Table of Contents
 
 - [How It Works](#how-it-works)
-  - [Controller Detection](#controller-detection)
-  - [Config Writing](#config-writing)
+    - [Controller Detection](#controller-detection)
+    - [Config Writing](#config-writing)
 - [Emulator Compatibility](#emulator-compatibility)
-- [Important Emulator Behavior](#important-emulator-behavior)
 - [First Setup](#first-setup)
+- [Mapping](#mapping)
 - [Modes](#modes)
     - [Manual Mode](#manual-mode)
     - [Automatic Mode](#automatic-mode)
-- [Settings](#settings)
-- [Performance](#performance)
+- [Settings](#settings-preview)
+- [Device Images](#device-images)
 - [Troubleshooting](#troubleshooting)
+- [Optional Setup Guides](#optional-setup-guides)
 
 ---
 
@@ -62,19 +60,21 @@ When external controllers are connected, EmuCtrlr switches Player 1 from the bui
 
 When all external controllers are disconnected, EmuCtrlr switches Player 1 back to the built-in controls.
 
+<img src="./assets/main_connected.png" width="700"/>
+
 ### Config Writing
 
 After detecting the controller order, EmuCtrlr can write the updated configuration into enabled emulator config files.
 
 The write behavior depends on the selected mode:
 
-- In **Manual Mode**, open EmuCtrlr and hold **Start** with Player 1 to write the controller configuration.
+- In **Manual Mode**, open EmuCtrlr and hold **Start** with the controller assigned to **Player 1** to write the controller configuration.
 - In **Automatic Mode**, EmuCtrlr writes the configuration automatically whenever the controller state changes.
 
 Only enabled emulators are modified.
 Disabled emulators are not affected.
 
-<img src="./assets/main_connected.png" width="800"/>
+<img src="./assets/writing.gif" width="700"/>
 
 ---
 
@@ -82,43 +82,62 @@ Disabled emulators are not affected.
 
 If you want me to test other standalone emulators, feel free to contact me. This list should cover most common use cases.
 
-| Emulator     | Status | Notes                                                                                |
-|-------------|--------|--------------------------------------------------------------------------------------|
-| Eden        | ✅     | Fully working                                                                        |
-| Dolphin     | ✅     | GameCube controls only                                                               |
+| Emulator    | Status | Notes                                                                                 |
+|-------------|--------|---------------------------------------------------------------------------------------|
+| Eden        | ✅     | Works, but Eden may need to be restarted after changing inputs                        |
+| Citron      | ✅     | Works, but Citron may need to be restarted after changing inputs                      |
+| Dolphin     | ✅     | GameCube controls only. Wii layouts are user-specific                                |
 | RetroArch   | ⚠️     | Works, but player slot assignment is currently bugged                                |
-| DuckStation | ❌ | Requires root access to config files. Use Swanstation on RetroArch as an alternative |
+| DuckStation | ❌     | Requires root access to config files. Use SwanStation on RetroArch as an alternative |
 | AetherSX2   | ❌     | Requires root access to config files                                                 |
 | NetherSX2   | ❌     | Requires root access to config files                                                 |
 
 > [!NOTE]
-> For RetroArch, EmuCtrlr uses the priority option to match player order with controller connection order.
+> **Eden / Citron behavior**
+>
+> Some launchers, including the default AYN launcher / Android Quickstep, may preload Eden or Citron in the background before you explicitly open them.
+>
+> When this happens, the emulator process may have already loaded its controller layout into memory before EmuCtrlr writes the updated controller mappings. As a result, the next game launch may still use the previous controller configuration.
+>
+> Fully restarting the emulator fixes the issue, because it reloads the config file on a fresh start.
+>
+> This behavior is caused by how the emulator loads its configuration, and cannot be fixed directly from EmuCtrlr.
+> However, it may change in future emulator versions if their config loading behavior changes..
+>
+> ES-DE tends to avoid this issue, as long as you do not return to the Android home / Quickstep.
+> 
+> **RetroArch**
+> 
+> EmuCtrlr uses the priority option to match player order with controller connection order.
 > However, this RetroArch feature is currently bugged.
 >
-> Until this is fixed in RetroArch, it is recommended to disable config writing for RetroArch.
+> As a result, EmuCtrlr does not apply any special workaround for RetroArch.
 
 ---
-## Important Emulator Behavior
-
-If an emulator is already running, restart it for the changes to take effect.
-
-This happens because most emulators load their controller configuration only when they start. EmuCtrlr cannot force an emulator to reload its config while a game is already running.
-
-For a smoother docked experience, you can use a keymapper shortcut to close the current game or emulator directly from your controller.
-
 
 ## First Setup
 
-<img src="./assets/onboarding.png" width="800"/>
+<img src="./assets/onboarding.gif" width="600"/>
 
 On first launch, EmuCtrlr needs to identify which controller profile belongs to the handheld built-in controls.
 
-1. Launch the app
-2. Select the built-in controller profile (it may appear as "Xbox Wireless Controller" or other names).
-3. Enable the emulators you want EmuCtrlr to manage
+1. Launch the app.
+2. Select the built-in controller profile. It may appear as "Xbox Wireless Controller" or another name.
+3. Enable the emulators you want EmuCtrlr to manage.
 
 > [!IMPORTANT]
 > Because some Android handheld devices use proxy controller profiles, it is recommended to turn off external controllers before selecting the built-in profile.
+
+---
+## Mapping
+
+The Mapping section lets you customize the button layout for a specific controller.
+
+If the default Xbox-style layout does not match your controller, you can select the controller and manually change its button assignments.
+
+EmuCtrlr will then use this custom layout when writing emulator configurations in the future.
+
+I plan to add predefined layouts for controllers in the future, but this requires knowing whether each controller uses an Xbox-style, Nintendo-style, or custom layout.
 
 ---
 
@@ -146,54 +165,34 @@ Automatic mode runs as a foreground service, allowing the app to continuously mo
 
 Use this mode if you want a fully automated experience without manually triggering configuration updates.
 
-For RAM usage while running in the background, see the RAM usage in the Performance section below.
+---
+
+## Settings preview
+
+<img src="./assets/settings1.png" width="600"/>
+<img src="./assets/settings2.png" width="600"/>
+<img src="./assets/settings3.png" width="600"/>
+<img src="./assets/settings4.png" width="600"/>
 
 ---
 
-## Settings
+## Device Images
 
-<img src="./assets/settings1.png" width="800"/>
+EmuCtrlr includes built-in images for several handheld consoles and controllers.
 
-### Theme
+Images are based on the device or controller model, and may not match the exact color of your own device.
 
-Change the app appearance.
+The full list of included device images is available here:
 
-### Auto / Manual Mode
+[Device Images](./DEVICE_IMAGES.md)
 
-Choose whether the app writes configs manually or automatically.
+If your device or controller is not listed, EmuCtrlr will use a placeholder image instead.
+> [!NOTE]
+> New device images will be added over time with your help.
+>
+>If your console or controller is not shown correctly in the app, please contact me with the name displayed by EmuCtrlr.
 
-### Built-in Controller
-
-Select the controller profile used by the handheld built-in controls.
-
-### Emulators
-
-Enable or disable config writing for each detected emulator.
-
-Only enabled emulators will be modified. Disabled emulators will not be affected.
-
-### Debug
-
-Enable debug logs when troubleshooting an issue.
-
----
-
-## Performance
-
-### RAM Usage During Config Writing
-
-<img src="./assets/memory_usage.png" width="800"/>
-
-During normal idle usage, the app uses around **80 MB of RAM**.
-
-During config writing, RAM usage can temporarily increase by around **8 MB**, then returns to the normal idle value.
-
-
-### 24h Memory Test
-
-![24h memory graph](./assets/ram-24h.png)
-
-A 24-hour memory test shows stable RAM usage with no visible memory leak.
+Support for adding or replacing custom images is planned for a future update.
 
 ---
 
@@ -210,23 +209,6 @@ This can happen with different package variants, such as:
 - forks
 - custom package names
 
-### Missing controller or console visuals
-
-Some controller or console visuals may be missing.
-
-If this happens, please contact me with the device/controller name.
-
-### Controller mapping issue
-
-The app uses a classic controller layout.
-
-If buttons are incorrectly assigned, please contact me with:
-
-- device name
-- controller name
-- emulator used
-- description of the issue
-
 ### Config writing issue
 
 If config writing does not work:
@@ -235,3 +217,15 @@ If config writing does not work:
 2. Enable debug logs
 3. Reproduce the issue
 4. Send the debug log file  
+
+---
+
+## Optional Setup Guides
+
+These guides are optional, but can help improve the handheld ↔ docked experience.
+
+- [ES-DE setup](./SETUP_ES_DE.md)  
+  How to add EmuCtrlr as an Android app inside ES-DE.
+
+- [Key Mapper setup](./SETUP_KEY_MAPPER.md)  
+  How to create a controller shortcut to exit or return from a running game.
