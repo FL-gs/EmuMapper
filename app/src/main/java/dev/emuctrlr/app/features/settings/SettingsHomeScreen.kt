@@ -33,6 +33,10 @@ import dev.emuctrlr.app.features.settings.emulators.EmulatorsScreen
 import dev.emuctrlr.app.features.settings.layout.SettingsLayout
 import dev.emuctrlr.app.features.settings.layout.SettingsSidebar
 import dev.emuctrlr.app.features.settings.mapping.MappingScreen
+import dev.emuctrlr.app.core.input.ControllerDisplay
+import dev.emuctrlr.app.core.ui.components.ControllerHintStyle
+
+
 
 private enum class SettingsCategory(@get:StringRes val labelRes: Int) {
     APPEARANCE(R.string.settings_category_App),
@@ -102,6 +106,10 @@ fun SettingsHomeScreen(
         if (mode == SettingsMode.HUB) HintBarState.SettingsHome else contentHintState
     )
 
+    val controllerHintStyle = visibleControllers.firstOrNull()
+        ?.let { ControllerDisplay.hintStyleFor(it) }
+        ?: ControllerHintStyle.GENERIC
+
     SettingsLayout(
         modifier = modifier
             .focusRequester(focusRequester)
@@ -151,6 +159,7 @@ fun SettingsHomeScreen(
             }
             .focusable(),
         footerHints = footerHints,
+        controllerHintStyle = controllerHintStyle,
         sidebar = {
             SettingsSidebar(
                 title = settingsTitle,

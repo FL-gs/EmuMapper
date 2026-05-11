@@ -14,12 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.emuctrlr.app.core.ui.components.ActionHint
 import dev.emuctrlr.app.core.ui.components.ActionHintBar
+import dev.emuctrlr.app.core.ui.components.ControllerHintStyle
 
 @Composable
 fun SettingsLayout(
     sidebar: @Composable () -> Unit,
     content: @Composable () -> Unit,
     footerHints: List<ActionHint>,
+    controllerHintStyle: ControllerHintStyle = ControllerHintStyle.GENERIC,
     modifier: Modifier = Modifier,
     sidebarWidth: Int = 180
 ) {
@@ -57,6 +59,7 @@ fun SettingsLayout(
 
         ActionHintBar(
             hints = footerHints,
+            controllerHintStyle = controllerHintStyle,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
