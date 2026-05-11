@@ -4,7 +4,6 @@ import android.content.Context
 import android.hardware.input.InputManager
 import android.os.Handler
 import android.os.Looper
-import android.view.InputDevice
 import dev.emuctrlr.app.core.utils.AppLogger
 import dev.emuctrlr.app.core.utils.LogTags
 
@@ -20,33 +19,29 @@ class InputDeviceMonitor(
 
     private val listener = object : InputManager.InputDeviceListener {
         override fun onInputDeviceAdded(deviceId: Int) {
-            val device = InputDevice.getDevice(deviceId)
-            if (device != null) {
-                AppLogger.d(
-                    LogTags.DEVICE,
-                    "device event | added\n  - ${device.toDeviceLogLine()}"
-                )
-            } else {
-                AppLogger.d(LogTags.DEVICE, "device event | added | id=$deviceId | details=unavailable")
-            }
+            AppLogger.d(
+                LogTags.DEVICE,
+                "device event | added | id=$deviceId"
+            )
+
             onAdded(deviceId)
         }
 
         override fun onInputDeviceRemoved(deviceId: Int) {
-            AppLogger.d(LogTags.DEVICE, "device event | removed | id=$deviceId")
+            AppLogger.d(
+                LogTags.DEVICE,
+                "device event | removed | id=$deviceId"
+            )
+
             onRemoved(deviceId)
         }
 
         override fun onInputDeviceChanged(deviceId: Int) {
-            val device = InputDevice.getDevice(deviceId)
-            if (device != null) {
-                AppLogger.d(
-                    LogTags.DEVICE,
-                    "device event | changed\n  - ${device.toDeviceLogLine()}"
-                )
-            } else {
-                AppLogger.d(LogTags.DEVICE, "device event | changed | id=$deviceId | details=unavailable")
-            }
+            AppLogger.d(
+                LogTags.DEVICE,
+                "device event | changed | id=$deviceId"
+            )
+
             onChanged(deviceId)
         }
     }
