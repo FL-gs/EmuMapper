@@ -48,9 +48,8 @@ object ControllerDisplay {
         return when {
             n.contains("xbox") -> ControllerHintStyle.XBOX
 
-            n.contains("dualsense") ||
-                    n.contains("wireless controller") ->
-                ControllerHintStyle.PLAYSTATION
+            n.contains("dualsense") ->
+                ControllerHintStyle.DUALSENSE
 
             n.contains("8bitdo ultimate 2c") ->
                 ControllerHintStyle.WIRELESS_ULTIMATE_2C
@@ -58,7 +57,7 @@ object ControllerDisplay {
             n.contains("8bitdo ultimate 2") ->
                 ControllerHintStyle.WIRELESS_ULTIMATE_2
 
-            n.contains("88bitdo sn30 pro") ->
+            n.contains("8bitdo sn30 pro") ->
                 ControllerHintStyle.SN30_PRO
             else ->
                 ControllerHintStyle.GENERIC

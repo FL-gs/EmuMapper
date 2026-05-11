@@ -30,6 +30,14 @@ object ActionIconResolver {
             else -> iconRes(action, ControllerHintStyle.GENERIC)
         }
 
+        ControllerHintStyle.DUALSENSE -> when (action) {
+            GamepadAction.SELECT -> R.drawable.ic_select_dualsense
+            GamepadAction.START -> R.drawable.ic_start_dualsense
+            GamepadAction.CONFIRM -> R.drawable.ic_cross_dualsense
+            GamepadAction.BACK -> R.drawable.ic_circle_dualsense
+            else -> iconRes(action, ControllerHintStyle.GENERIC)
+        }
+
         else -> when (action) {
             GamepadAction.NAVIGATE -> R.drawable.ic_nav
             GamepadAction.CHOOSE -> R.drawable.ic_choose
