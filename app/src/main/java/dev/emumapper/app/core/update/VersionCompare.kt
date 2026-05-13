@@ -1,7 +1,7 @@
 package dev.emumapper.app.core.update
 
-/**
- * Normalise les noms de version, puis compare deux versions de l'application.
+/*
+ * Normalizes version names, then compares two app versions.
  */
 
 object VersionCompare {

@@ -1,16 +1,11 @@
 package dev.emumapper.app.core.input.mapping
 
-/**
- * Résolution du mapping par défaut.
+/*
+ * Resolves the default controller mapping.
  *
- * Pour l'instant, l'app n'a qu'un seul profil standard.
- * Le paramètre controllerName est conservé volontairement pour pouvoir ajouter plus tard :
- *
- * when {
- *     name.contains("8bitdo ...") -> MappingProfiles.xxx
- *     name.contains("dualsense") -> MappingProfiles.xxx
- *     else -> MappingProfiles.androidStandard
- * }
+ * For now, the app only has one standard profile.
+ * controllerName is intentionally kept so controller-specific profiles
+ * can be added later.
  */
 object DefaultControllerMappings {
 

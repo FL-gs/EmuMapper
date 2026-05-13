@@ -1,10 +1,8 @@
 package dev.emumapper.app.core.input.mapping
 
-/**
- * Boutons/actions logiques que EmuMapper sait mapper.
- *
- * Ce modèle reste indépendant des émulateurs.
- * Eden, Dolphin, RetroArch, etc. traduisent ensuite ces actions vers leur propre nomenclature.
+/*
+ * Logical buttons/actions that EmuMapper can map.
+ * Eden, Dolphin, RetroArch, etc. later translate these actions to their own naming scheme.
  */
 enum class EmuControl(
     val stableKey: String,

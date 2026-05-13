@@ -3,16 +3,8 @@ package dev.emumapper.app.core.input
 import android.view.InputDevice
 
 /*
-Kt qui prend les infos avec deviceInput.
-Possibilité d'ajouter d'autre info :
-vendorid
-productid
-haskeys
-...
-https://developer.android.com/reference/android/view/InputDevice
-A chaque rajout dans data class ControllerInfo, rajouter aussi dans fun InputDevice.toControllerInfo(): ControllerInfo {
-*/
-
+ * Builds ControllerInfo from Android InputDevice data.
+ */
 data class ControllerInfo(
     val name: String,
     val deviceId: Int,
@@ -21,14 +13,11 @@ data class ControllerInfo(
     val vendorId: Int,
     val productId: Int,
     val isInternal: Boolean = false,
-
-    // Port Android/Yuzu-like utilisé par Eden/Citron
     val yuzuPort: Int? = null
 )
 
-/**
- * Créer une clé stable pour pour identifier une manette interne
- * (descriptor peut être null)
+/*
+ * Creates a stable key used to identify the internal controller.
  */
 fun ControllerInfo.internalProfileKey(): String {
     return "${name}|${descriptor ?: "null"}"
@@ -46,12 +35,12 @@ fun InputDevice.toControllerInfo(isInternal: Boolean = false): ControllerInfo {
     )
 }
 
-/**
- * Clé utilisée pour identifier une manette physique et éviter les doublons.
+/*
+ * Key used to identify a physical controller and avoid duplicates.
  *
- * Priorité :
- * 1. controllerNumber (le plus fiable pour les proxies Android)
- * 2. descriptor (stable dans la plupart des cas)
+ * Priority:
+ * 1. controllerNumber, most reliable with Android proxy devices
+ * 2. descriptor, stable in most cases
  * 3. deviceId fallback
  */
 fun ControllerInfo.deduplicationKey(): String {
@@ -60,8 +49,8 @@ fun ControllerInfo.deduplicationKey(): String {
         ?: "id:$deviceId"
 }
 
-/**
- * Vérifie si le device est une manette et pas un device genre clavier, casque etc...
+/*
+ * Checks whether this device is a gamepad/joystick
  */
 fun InputDevice.isGamepadDevice(): Boolean {
     if (isVirtual) return false

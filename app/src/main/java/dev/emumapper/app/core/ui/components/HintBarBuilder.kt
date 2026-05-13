@@ -6,7 +6,7 @@ import dev.emumapper.app.R
 import dev.emumapper.app.core.input.GamepadAction
 
 /*
-pour tel état/contexte, quels hints afficher
+ * Builds the hints to display for the current UI state.
  */
 @Composable
 fun rememberHintsForState(state: HintBarState): List<ActionHint> {

@@ -17,13 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 /*
-le rendu UI
-
-taille icône
-taille texte
-spacing
-layout
-apparence visuelle
+ * UI rendering for the bottom hint bar:
+ * icon size, text size, spacing, layout, and visual appearance.
  */
 
 @Composable
@@ -46,7 +41,7 @@ fun ActionHintBar(
             )
 
             if (index < hints.lastIndex) {
-                Spacer(Modifier.width(24.dp)) // espace entre chaque hint
+                Spacer(Modifier.width(24.dp))
             }
         }
     }
@@ -69,7 +64,7 @@ private fun ActionHintItem(
             modifier = Modifier.size(18.dp)
         )
 
-        Spacer(Modifier.width(5.dp)) // espace entre l'icone et le label
+        Spacer(Modifier.width(5.dp))
 
         Text(
             text = hint.label,

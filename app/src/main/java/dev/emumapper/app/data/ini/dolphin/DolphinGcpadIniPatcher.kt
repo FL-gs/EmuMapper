@@ -72,7 +72,6 @@ object DolphinGcpadIniPatcher {
                 currentLines = mutableListOf()
             } else {
                 if (currentHeader == null) {
-                    // lignes avant première section : on les ignore comme ton patcher actuel le fait de facto
                     return@forEach
                 }
                 currentLines += line
@@ -94,7 +93,6 @@ object DolphinGcpadIniPatcher {
     private fun patchSection(section: Section, mappedController: MappedController) {
         val values = linkedMapOf<String, String>()
 
-        // Parse existant en gardant la première occurrence de chaque clé
         section.lines.forEach { line ->
             val idx = line.indexOf('=')
             if (idx <= 0) return@forEach
@@ -119,11 +117,6 @@ object DolphinGcpadIniPatcher {
             values[key] = value
         }
 
-        // On reconstruit la section dans un ordre stable:
-        // 1. Device
-        // 2. Rumble/Motor si présent dans l'ancien fichier
-        // 3. mapping Dolphin généré depuis ControllerMapping
-        // 4. autres clés restantes non reconnues
         val rebuilt = mutableListOf<String>()
 
         rebuilt += "Device = ${values.getValue("Device")}"

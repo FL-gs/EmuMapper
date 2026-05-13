@@ -198,7 +198,6 @@ fun DebugScreen(
                     }
 
                     else -> {
-                        // rien → espace vide mais réservé 👍
                     }
                 }
             }

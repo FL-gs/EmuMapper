@@ -2,13 +2,10 @@ package dev.emumapper.app.core.input.mapping
 
 import dev.emumapper.app.core.input.ControllerInfo
 
-/**
- * Résout le mapping final d'une manette :
+/*
+ * Resolves the final mapping for a controller:
  *
- * mapping final = mapping par défaut + overrides utilisateur
- *
- * Les overrides sont passés au moment de la résolution pour suivre les changements
- * DataStore sans recréer le resolver.
+ * final mapping = default mapping + user overrides
  */
 class ControllerMappingResolver {
 

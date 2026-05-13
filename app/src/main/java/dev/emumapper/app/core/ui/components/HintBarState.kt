@@ -1,11 +1,7 @@
 package dev.emumapper.app.core.ui.components
 
 /*
-la description du contexte courant
-
-sur quel écran l'utilisateur es
-quel sous-état UI est actif
-ce qui influence les hints
+ * Describes the current UI context used by the hint bar.
  */
 
 sealed interface HintBarState {

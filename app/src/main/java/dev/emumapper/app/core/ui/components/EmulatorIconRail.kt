@@ -18,7 +18,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import dev.emumapper.app.data.emulators.EmulatorDef
 
-//kt qui sert au visuel de la barre d'icons des emulateurs
 @Composable
 fun EmulatorIconRail(
     emulators: List<EmulatorDef>,
@@ -35,13 +34,11 @@ fun EmulatorIconRail(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp) // Espace entre chaque icones
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             emulators.forEach { emu ->
-                // “pastilles” d’icône comme sur ton mockup
                 Box(
                     modifier = Modifier
-                        //.border(width = 2.dp, color = Color.Red) //debug
                         .clip(CircleShape),
                     contentAlignment = Alignment.Center
                 ) {

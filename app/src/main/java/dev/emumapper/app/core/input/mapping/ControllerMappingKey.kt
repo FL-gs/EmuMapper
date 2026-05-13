@@ -2,11 +2,11 @@ package dev.emumapper.app.core.input.mapping
 
 import dev.emumapper.app.core.input.ControllerInfo
 
-/**
- * Clé de profil mapping.
+/*
+ * Mapping profile key.
  *
- * On utilise seulement le nom de la manette.
- * Le descriptor/vendorId/productId peuvent être faux quand proxy.
+ * Only the controller name is used because descriptor/vendorId/productId
+ * can be wrong when Android exposes a proxied device.
  */
 fun ControllerInfo.mappingProfileKey(): String {
     return name.toMappingProfileKey()

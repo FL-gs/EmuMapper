@@ -4,11 +4,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-/**
- * Gère l'état du système de mise à jour.
+/*
+ * Manages the app update system state.
  *
- * Lance le check au démarrage, filtre si version ignorée,
- * puis expose l'update disponible à l'UI.
+ * Runs the startup check, filters out ignored versions,
+ * then exposes the available update to the UI.
  */
 
 class UpdateManager(

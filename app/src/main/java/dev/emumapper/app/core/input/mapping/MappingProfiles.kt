@@ -3,11 +3,10 @@ package dev.emumapper.app.core.input.mapping
 import android.view.KeyEvent
 import android.view.MotionEvent
 
-/**
- * Profils de mapping intégrés à l'app.
+/*
+ * Built-in controller mapping profiles.
  *
- * V1 : un seul profil par défaut.
- * Plus tard, possibilité d'ajouter xboxLike, nintendoLike, dualSenseLike, etc.
+ * V1: one default profile only.
  */
 object MappingProfiles {
 

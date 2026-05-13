@@ -162,7 +162,7 @@ object YuzuControlsPatcher {
             )
         }
 
-        // player_8 reprend la config de player_0.
+        // player_8 reuses player_0's config.
         val p0 = controllers.getOrNull(0)
         val p0yuzuEntry = p0?.controller?.yuzuControllerEntryOrNull()
 

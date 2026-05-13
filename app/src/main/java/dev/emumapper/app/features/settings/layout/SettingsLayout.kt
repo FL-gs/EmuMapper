@@ -30,7 +30,6 @@ fun SettingsLayout(
             .fillMaxSize()
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            // Sidebar (menu gauche)
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -39,7 +38,6 @@ fun SettingsLayout(
                 sidebar()
             }
 
-            // Séparateur
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -47,7 +45,6 @@ fun SettingsLayout(
                     .background(MaterialTheme.colorScheme.outline)
             )
 
-            // Contenu
             Box(
                 modifier = Modifier
                     .fillMaxSize()

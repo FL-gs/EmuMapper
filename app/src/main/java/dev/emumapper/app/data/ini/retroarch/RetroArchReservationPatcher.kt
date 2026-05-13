@@ -46,13 +46,10 @@ object RetroArchReservationPatcher {
                 val product = "%04x".format(controller.productId)
                 val deviceString = "$vendor:$product ${controller.name}"
 
-                // garde ton comportement actuel
+                // Keeps the current behavior until the bug is fixed.
                 values[typeKey] = "0"
                 values[deviceKey] = ""
 
-                // si un jour tu veux réellement activer la réservation :
-                // values[typeKey] = "1"
-                // values[deviceKey] = deviceString
             } else {
                 values[typeKey] = "0"
                 values[deviceKey] = ""

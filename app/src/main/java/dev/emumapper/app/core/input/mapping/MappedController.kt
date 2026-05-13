@@ -3,7 +3,7 @@ package dev.emumapper.app.core.input.mapping
 import dev.emumapper.app.core.input.ControllerInfo
 
 /*
- * Manettes visible dans l'app + mapping final.
+ * Visible controller in the app with its final mapping.
  */
 data class MappedController(
     val controller: ControllerInfo,

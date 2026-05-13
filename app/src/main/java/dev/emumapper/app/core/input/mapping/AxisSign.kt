@@ -1,11 +1,7 @@
 package dev.emumapper.app.core.input.mapping
 
-/**
- * Direction d'un axe Android.
- *
- * Exemple :
- * - AXIS_HAT_X + NEGATIVE = D-Pad Left
- * - AXIS_HAT_X + POSITIVE = D-Pad Right
+/*
+ * Direction of an Android axis.
  */
 enum class AxisSign(
     val symbol: String

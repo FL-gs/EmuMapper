@@ -4,16 +4,9 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import java.util.Locale
 
-/**
- * Input Android reçu pour une action logique EmuMapper.
- *
- * Important :
- * - Les boutons simples viennent souvent de KeyEvent.
- * - Le D-Pad peut venir de KeyEvent OU de MotionEvent axis.
- * - Les gâchettes et les sticks peuvent venir de MotionEvent axis.
- *
- * displayLabel() sert uniquement à l'affichage UI.
- * Les vraies données utilisées par les mappings restent keyCode / axis / sign.
+/*
+ * Android input bound to a logical EmuMapper action.
+ * displayLabel() is only used for UI display.
  */
 sealed interface InputBinding {
 

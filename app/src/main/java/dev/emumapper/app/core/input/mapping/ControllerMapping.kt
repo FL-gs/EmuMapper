@@ -1,11 +1,5 @@
 package dev.emumapper.app.core.input.mapping
 
-/**
- * Mapping complet ou partiel d'une manette.
- *
- * Pour les profils par défaut : remplit normalement toutes les actions connues.
- * Pour les overrides utilisateur : stocker que les actions modifiées.
- */
 data class ControllerMapping(
     val bindings: Map<EmuControl, InputBinding>
 ) {
@@ -32,8 +26,8 @@ data class ControllerMapping(
         )
     }
 
-    /**
-     * Applique des overrides utilisateur par-dessus un mapping par défaut.
+    /*
+     * Applies user overrides on top of a default mapping.
      */
     fun mergedWithOverrides(overrides: ControllerMapping?): ControllerMapping {
         if (overrides == null || overrides.bindings.isEmpty()) return this
@@ -43,11 +37,8 @@ data class ControllerMapping(
         )
     }
 
-    /**
-     * Hash stable pour inclure le mapping dans WriteSnapshot plus tard.
-     *
-     * Sans ça, l'app peut croire que la config est déjà écrite alors que seul le mapping
-     * a changé.
+    /*
+     * Stable hash used to include controller mappings in WriteSnapshot.
      */
     fun stableHash(): String {
         return bindings

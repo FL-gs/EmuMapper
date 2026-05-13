@@ -5,21 +5,21 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
-// 🌤️ Light theme
+// Light theme
 private val LightColorScheme = lightColorScheme(
     background = Neutral500,
-    surface = Neutral550, // couleur du background de la settingsidebar
-    surfaceVariant = Neutral300, // couleur du background des bouton controllers
+    surface = Neutral550,
+    surfaceVariant = Neutral300,
     primary = Primary500,
     secondary = Secondary500,
     tertiary = tertiary500,
-    onSurface = Neutral900, // couleur du texte
-    onSurfaceVariant = Neutral800, // couleur du texte dans les bouton
-    outline = Neutral700, // couleur des bordures
+    onSurface = Neutral900,
+    onSurfaceVariant = Neutral800,
+    outline = Neutral700,
     error = Error500,
 )
 
-// 🌑 Dark theme
+// Dark theme
 private val DarkColorScheme = darkColorScheme(
     background = Neutral950,
     surface = Neutral960,
@@ -42,7 +42,7 @@ fun AppTheme(
 
     MaterialTheme(
         colorScheme = colors,
-        typography = AppTypography, // on le fera juste après
+        typography = AppTypography,
         content = content
     )
 }

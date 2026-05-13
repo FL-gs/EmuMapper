@@ -4,20 +4,11 @@ import android.os.Build
 import dev.emumapper.app.R
 import dev.emumapper.app.core.ui.components.ControllerHintStyle
 
-/*
- * Fournit les informations d'affichage pour un controller dans l'UI.
- *
- * Centralise la logique permettant de :
- * - Choisir l'image associée à un controller (manette externe ou console interne)
- * - Déterminer le nom affiché dans la grille
- * - Choisir les icones de la hintbar selon le controller/console portable
- * La distinction entre manette interne et externe se base sur ControllerInfo.isInternal.
- *
- * ⚠️ Ne contient que de la logique UI (pas de logique métier ou de détection).
- */
-
 object ControllerDisplay {
 
+    /*
+     * Returns the image used to display this controller in the UI.
+     */
     fun iconResFor(controller: ControllerInfo): Int {
         return if (controller.isInternal) {
             internalConsoleResForCurrentDevice()
@@ -26,6 +17,26 @@ object ControllerDisplay {
         }
     }
 
+    /*
+     * Picks the image for known external controllers.
+     */
+    private fun externalControllerResFor(name: String): Int {
+        val n = name.lowercase()
+        return when {
+            n.contains("8bitdo ultimate 2c") -> R.drawable.controller_8bitdo_ultimate_2c
+            n.contains("8bitdo ultimate") -> R.drawable.controller_8bitdo_ultimate
+            n.contains("8bitdo ngc") -> R.drawable.controller_8bitdo_ngc_modkit
+            n.contains("8bitdo sn30 pro") -> R.drawable.controller_8bitdo_sn30_pro
+            n.contains("nyxi warrior") -> R.drawable.controller_nyxi_warrior
+            n.contains("dualsense") -> R.drawable.controller_dualsense
+            n.contains("xbox") -> R.drawable.controller_xbox
+            else -> R.drawable.controller_placeholder
+        }
+    }
+
+    /*
+     * Returns the name shown in the controller grid.
+     */
     fun displayNameFor(controller: ControllerInfo): String {
         return if (controller.isInternal) {
             internalConsoleDisplayNameForCurrentDevice()
@@ -34,6 +45,9 @@ object ControllerDisplay {
         }
     }
 
+    /*
+     * Returns the hint style used by the bottom hint bar.
+     */
     fun hintStyleFor(controller: ControllerInfo): ControllerHintStyle {
         return if (controller.isInternal) {
             internalConsoleHintStyleForCurrentDevice()
@@ -42,6 +56,9 @@ object ControllerDisplay {
         }
     }
 
+    /*
+     * Picks the hint style for known external controllers.
+     */
     private fun externalControllerHintStyleFor(name: String): ControllerHintStyle {
         val n = name.lowercase()
 
@@ -64,6 +81,9 @@ object ControllerDisplay {
         }
     }
 
+    /*
+     * Picks the hint style for the current Android handheld.
+     */
     private fun internalConsoleHintStyleForCurrentDevice(): ControllerHintStyle {
         val manufacturer = Build.MANUFACTURER.orEmpty().lowercase()
         val model = Build.MODEL.orEmpty().lowercase()
@@ -90,20 +110,9 @@ object ControllerDisplay {
         }
     }
 
-    private fun externalControllerResFor(name: String): Int {
-        val n = name.lowercase()
-        return when {
-            n.contains("8bitdo ultimate 2c") -> R.drawable.controller_8bitdo_ultimate_2c
-            n.contains("8bitdo ultimate") -> R.drawable.controller_8bitdo_ultimate
-            n.contains("8bitdo ngc") -> R.drawable.controller_8bitdo_ngc_modkit
-            n.contains("8bitdo sn30 pro") -> R.drawable.controller_8bitdo_sn30_pro
-            n.contains("nyxi warrior") -> R.drawable.controller_nyxi_warrior
-            n.contains("dualsense") -> R.drawable.controller_dualsense
-            n.contains("xbox") -> R.drawable.controller_xbox
-            else -> R.drawable.controller_placeholder
-        }
-    }
-
+    /*
+     * Picks the image for the current Android handheld.
+     */
     private fun internalConsoleResForCurrentDevice(): Int {
         val manufacturer = Build.MANUFACTURER.orEmpty().lowercase()
         val model = Build.MODEL.orEmpty().lowercase()
@@ -132,6 +141,9 @@ object ControllerDisplay {
         }
     }
 
+    /*
+     * Returns the display name for the current Android handheld.
+     */
     private fun internalConsoleDisplayNameForCurrentDevice(): String {
         val manufacturer = Build.MANUFACTURER.orEmpty().lowercase()
         val model = Build.MODEL.orEmpty().lowercase()
@@ -143,21 +155,20 @@ object ControllerDisplay {
             manufacturer.contains("ayn") && (
                     model.contains("odin3") || model.contains("odin 3")
                     ) ->
-                        "AYN Odin 3"
+                "AYN Odin 3"
 
             manufacturer.contains("retroid") && (
                     model.contains("rp5") || model.contains("pocket 5")
                     ) ->
-                        "Retroid Pocket 5"
+                "Retroid Pocket 5"
 
             manufacturer.contains("retroid") && (
                     model.contains("rp6") || model.contains("pocket 6")
                     ) ->
-                        "Retroid Pocket 6"
-
+                "Retroid Pocket 6"
 
             else ->
-                Build.MODEL.orEmpty().ifBlank { "Console interne" }
+                Build.MODEL.orEmpty().ifBlank { "Internal console" }
         }
     }
 }

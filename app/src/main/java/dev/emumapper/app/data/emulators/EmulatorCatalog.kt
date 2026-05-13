@@ -3,10 +3,8 @@ package dev.emumapper.app.data.emulators
 import androidx.annotation.DrawableRes
 import dev.emumapper.app.R
 
-/**
- * ajout des emulateurs detecté par l'app ici.
- * Pour connaitre le package je peux utiliser Package Name Viewer 2.0
- * Penser a modifier aussi l'androidManifest pour chaque ajout
+/*
+ * Add emulators detected by the app .
  */
 data class EmulatorDef(
     val id: String,

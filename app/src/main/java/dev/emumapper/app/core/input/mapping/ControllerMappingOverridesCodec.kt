@@ -2,11 +2,8 @@ package dev.emumapper.app.core.input.mapping
 
 import org.json.JSONObject
 
-/**
- * Encode/décode les overrides de mapping utilisateur stockés dans DataStore.
- *
- * Le JSON stocke uniquement les mappings custom par nom de manette normalisé.
- * Les mappings par défaut restent dans MappingProfiles.
+/*
+ * Encodes and decodes user controller mapping overrides stored in DataStore.
  */
 object ControllerMappingOverridesCodec {
 

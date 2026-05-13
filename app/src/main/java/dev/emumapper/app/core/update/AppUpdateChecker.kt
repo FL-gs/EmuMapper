@@ -6,13 +6,12 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
-/**
- * Interroge GitHub pour récupérer la dernière release de l'application.
+/*
+ * Queries GitHub to fetch the latest app release.
  *
- * Lit le tag et l'URL de la release, puis retourne une update si elle est
- * plus récente que la version installée.
+ * Reads the release tag and URL, then returns an update
+ * if it is newer than the installed version.
  */
-
 class AppUpdateChecker(
     private val owner: String = "FL-gs",
     private val repo: String = "EmuMapper"
