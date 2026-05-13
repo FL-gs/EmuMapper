@@ -82,7 +82,7 @@ object ControllerDisplay {
                 ControllerHintStyle.RETROID_POCKET_5
 
             manufacturer.contains("retroid") &&
-                    (model.contains("rp5") || model.contains("pocket 5")) ->
+                    (model.contains("rp6") || model.contains("pocket 6")) ->
                 ControllerHintStyle.RETROID_POCKET_6
 
             else ->
