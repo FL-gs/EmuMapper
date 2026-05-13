@@ -15,7 +15,7 @@
     </queries>
 
     <application
-        android:name="dev.emuctrlr.app.PairingApplication"
+        android:name="dev.emumapper.app.PairingApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -24,12 +24,12 @@
         android:banner="@drawable/esde_banner"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.EmuCtrlr">
+        android:theme="@style/Theme.EmuMapper">
         <activity
-            android:name="dev.emuctrlr.app.MainActivity"
+            android:name="dev.emumapper.app.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.EmuCtrlr">
+            android:theme="@style/Theme.EmuMapper">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="dev.emuctrlr.app.core.pairing.AutoPairingService"
+            android:name="dev.emumapper.app.core.pairing.AutoPairingService"
             android:exported="false"
             android:foregroundServiceType="connectedDevice" />
         <meta-data

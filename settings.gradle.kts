@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "EmuCtrlr"
+rootProject.name = "EmuMapper"
 include(":app")

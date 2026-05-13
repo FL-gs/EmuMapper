@@ -1,8 +1,8 @@
 # Supported Visuals
 
-This page lists the controller and console visuals currently included in EmuCtrlr.
+This page lists the controller and console visuals currently included in EmuMapper.
 
-If your device or controller is not listed, EmuCtrlr may use a placeholder visual instead.
+If your device or controller is not listed, EmuMapper may use a placeholder visual instead.
 
 ---
 

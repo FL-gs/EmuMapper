@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    namespace = "dev.emuctrlr.app"
+    namespace = "dev.emumapper.app"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "dev.emuctrlr.app"
+        applicationId = "dev.emumapper.app"
         minSdk = 26
         targetSdk = 36
         versionCode = 6

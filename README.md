@@ -2,15 +2,15 @@
 
 ---
 
-# EmuCtrlr
+# EmuMapper
 
-EmuCtrlr is an Android app designed for Android handheld gaming devices such as Retroid or AYN consoles.
+EmuMapper is an Android app designed for Android handheld gaming devices such as Retroid or AYN consoles.
 
 It manages controller assignments for emulators, enabling a seamless handheld ↔ docked experience.
 The app is designed for controller-based navigation and does not support touchscreen input.
 
 > [!IMPORTANT]
-> EmuCtrlr was originally made for personal use.
+> EmuMapper was originally made for personal use.
 >
 > I started learning Kotlin for this project, and I am still learning. I used LLMs to help with some features that were too challenging for me
 > 
@@ -40,14 +40,14 @@ The app is designed for controller-based navigation and does not support touchsc
 
 ## How It Works
 
-EmuCtrlr works in two steps:
+EmuMapper works in two steps:
 
 1. It detects the connected controllers.
 2. It writes the correct controller order into supported emulator config files.
 
 ### Controller Detection
 
-EmuCtrlr scans connected controllers:
+EmuMapper scans connected controllers:
 
 - when the app starts
 - when a controller is connected
@@ -56,20 +56,20 @@ EmuCtrlr scans connected controllers:
 
 Controllers are assigned to player slots based on their connection order.
 
-When external controllers are connected, EmuCtrlr switches Player 1 from the built-in controls to the first external controller.
+When external controllers are connected, EmuMapper switches Player 1 from the built-in controls to the first external controller.
 
-When all external controllers are disconnected, EmuCtrlr switches Player 1 back to the built-in controls.
+When all external controllers are disconnected, EmuMapper switches Player 1 back to the built-in controls.
 
 <img src="./assets/main_connected.png" width="700"/>
 
 ### Config Writing
 
-After detecting the controller order, EmuCtrlr can write the updated configuration into enabled emulator config files.
+After detecting the controller order, EmuMapper can write the updated configuration into enabled emulator config files.
 
 The write behavior depends on the selected mode:
 
-- In **Manual Mode**, open EmuCtrlr and hold **Start** with the controller assigned to **Player 1** to write the controller configuration.
-- In **Automatic Mode**, EmuCtrlr writes the configuration automatically whenever the controller state changes.
+- In **Manual Mode**, open EmuMapper and hold **Start** with the controller assigned to **Player 1** to write the controller configuration.
+- In **Automatic Mode**, EmuMapper writes the configuration automatically whenever the controller state changes.
 
 Only enabled emulators are modified.
 Disabled emulators are not affected.
@@ -97,21 +97,21 @@ If you want me to test other standalone emulators, feel free to contact me. This
 >
 > Some launchers, including the default AYN launcher / Android Quickstep, may preload Eden or Citron in the background before you explicitly open them.
 >
-> When this happens, the emulator process may have already loaded its controller layout into memory before EmuCtrlr writes the updated controller mappings. As a result, the next game launch may still use the previous controller configuration.
+> When this happens, the emulator process may have already loaded its controller layout into memory before EmuMapper writes the updated controller mappings. As a result, the next game launch may still use the previous controller configuration.
 >
 > Fully restarting the emulator fixes the issue, because it reloads the config file on a fresh start.
 >
-> This behavior is caused by how the emulator loads its configuration, and cannot be fixed directly from EmuCtrlr.
+> This behavior is caused by how the emulator loads its configuration, and cannot be fixed directly from EmuMapper.
 > However, it may change in future emulator versions if their config loading behavior changes..
 >
 > ES-DE tends to avoid this issue, as long as you do not return to the Android home / Quickstep.
 > 
 > **RetroArch**
 > 
-> EmuCtrlr uses the priority option to match player order with controller connection order.
+> EmuMapper uses the priority option to match player order with controller connection order.
 > However, this RetroArch feature is currently bugged.
 >
-> As a result, EmuCtrlr does not apply any special workaround for RetroArch.
+> As a result, EmuMapper does not apply any special workaround for RetroArch.
 
 ---
 
@@ -119,11 +119,11 @@ If you want me to test other standalone emulators, feel free to contact me. This
 
 <img src="./assets/onboarding.gif" width="600"/>
 
-On first launch, EmuCtrlr needs to identify which controller profile belongs to the handheld built-in controls.
+On first launch, EmuMapper needs to identify which controller profile belongs to the handheld built-in controls.
 
 1. Launch the app.
 2. Select the built-in controller profile. It may appear as "Xbox Wireless Controller" or another name.
-3. Enable the emulators you want EmuCtrlr to manage.
+3. Enable the emulators you want EmuMapper to manage.
 
 > [!IMPORTANT]
 > Because some Android handheld devices use proxy controller profiles, it is recommended to turn off external controllers before selecting the built-in profile.
@@ -135,7 +135,7 @@ The Mapping section lets you customize the button layout for a specific controll
 
 If the default Xbox-style layout does not match your controller, you can select the controller and manually change its button assignments.
 
-EmuCtrlr will then use this custom layout when writing emulator configurations in the future.
+EmuMapper will then use this custom layout when writing emulator configurations in the future.
 
 I plan to add predefined layouts for controllers in the future, but this requires knowing whether each controller uses an Xbox-style, Nintendo-style, or custom layout.
 
@@ -178,7 +178,7 @@ Use this mode if you want a fully automated experience without manually triggeri
 
 ## Device Images
 
-EmuCtrlr includes built-in images for several handheld consoles and controllers.
+EmuMapper includes built-in images for several handheld consoles and controllers.
 
 Images are based on the device or controller model, and may not match the exact color of your own device.
 
@@ -186,11 +186,11 @@ The full list of included device images is available here:
 
 [Device Images](./DEVICE_IMAGES.md)
 
-If your device or controller is not listed, EmuCtrlr will use a placeholder image instead.
+If your device or controller is not listed, EmuMapper will use a placeholder image instead.
 > [!NOTE]
 > New device images will be added over time with your help.
 >
->If your console or controller is not shown correctly in the app, please contact me with the name displayed by EmuCtrlr.
+>If your console or controller is not shown correctly in the app, please contact me with the name displayed by EmuMapper.
 
 Support for adding or replacing custom images is planned for a future update.
 
@@ -225,7 +225,7 @@ If config writing does not work:
 These guides are optional, but can help improve the handheld ↔ docked experience.
 
 - [ES-DE setup](./SETUP_ES_DE.md)  
-  How to add EmuCtrlr as an Android app inside ES-DE.
+  How to add EmuMapper as an Android app inside ES-DE.
 
 - [Key Mapper setup](./SETUP_KEY_MAPPER.md)  
   How to create a controller shortcut to exit or return from a running game.
