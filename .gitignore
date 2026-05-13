@@ -37,3 +37,7 @@ kotlin_dump.txt
 *.jks
 *.keystore
 app/debug/
+
+# Generated APK outputs
+app/release/
+app/debug/
