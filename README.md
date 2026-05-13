@@ -9,14 +9,14 @@ EmuMapper is an Android app designed for Android handheld gaming devices such as
 It manages controller assignments for emulators, enabling a seamless handheld ↔ docked experience.
 The app is designed for controller-based navigation and does not support touchscreen input.
 
+[Download latest release](https://github.com/FL-gs/EmuMapper/releases/latest)
+
 > [!IMPORTANT]
 > EmuMapper was originally made for personal use.
 >
 > I started learning Kotlin for this project, and I am still learning. I used LLMs to help with some features that were too challenging for me
 > 
 > I am currently refactoring it to support more devices, controllers, and emulator setups.
->
-> The app may not work correctly on every device or setup yet.
 > 
 > You can contact me on Discord: **fl.gs**
 
@@ -25,8 +25,8 @@ The app is designed for controller-based navigation and does not support touchsc
 - [How It Works](#how-it-works)
     - [Controller Detection](#controller-detection)
     - [Config Writing](#config-writing)
-- [Emulator Compatibility](#emulator-compatibility)
 - [First Setup](#first-setup)
+- [Emulator Compatibility](#emulator-compatibility)
 - [Mapping](#mapping)
 - [Modes](#modes)
     - [Manual Mode](#manual-mode)
@@ -78,43 +78,6 @@ Disabled emulators are not affected.
 
 ---
 
-## Emulator Compatibility
-
-If you want me to test other standalone emulators, feel free to contact me. This list should cover most common use cases.
-
-| Emulator    | Status | Notes                                                                                 |
-|-------------|--------|---------------------------------------------------------------------------------------|
-| Eden        | ✅     | Works, but Eden may need to be restarted after changing inputs                        |
-| Citron      | ✅     | Works, but Citron may need to be restarted after changing inputs                      |
-| Dolphin     | ✅     | GameCube controls only. Wii layouts are user-specific                                |
-| RetroArch   | ⚠️     | Works, but player slot assignment is currently bugged                                |
-| DuckStation | ❌     | Requires root access to config files. Use SwanStation on RetroArch as an alternative |
-| AetherSX2   | ❌     | Requires root access to config files                                                 |
-| NetherSX2   | ❌     | Requires root access to config files                                                 |
-
-> [!NOTE]
-> **Eden / Citron behavior**
->
-> Some launchers, including the default AYN launcher / Android Quickstep, may preload Eden or Citron in the background before you explicitly open them.
->
-> When this happens, the emulator process may have already loaded its controller layout into memory before EmuMapper writes the updated controller mappings. As a result, the next game launch may still use the previous controller configuration.
->
-> Fully restarting the emulator fixes the issue, because it reloads the config file on a fresh start.
->
-> This behavior is caused by how the emulator loads its configuration, and cannot be fixed directly from EmuMapper.
-> However, it may change in future emulator versions if their config loading behavior changes..
->
-> ES-DE tends to avoid this issue, as long as you do not return to the Android home / Quickstep.
-> 
-> **RetroArch**
-> 
-> EmuMapper uses the priority option to match player order with controller connection order.
-> However, this RetroArch feature is currently bugged.
->
-> As a result, EmuMapper does not apply any special workaround for RetroArch.
-
----
-
 ## First Setup
 
 <img src="./assets/onboarding.gif" width="600"/>
@@ -129,6 +92,53 @@ On first launch, EmuMapper needs to identify which controller profile belongs to
 > Because some Android handheld devices use proxy controller profiles, it is recommended to turn off external controllers before selecting the built-in profile.
 
 ---
+
+## Emulator Compatibility
+
+If you want me to test other standalone emulators, feel free to contact me. This list should cover most common use cases.
+
+| Emulator    | Status | Notes                                                                                 |
+|-------------|--------|---------------------------------------------------------------------------------------|
+| Eden        | ✅     | Works, but Eden may need to be restarted after changing inputs                        |
+| Citron      | ✅     | Works, but Citron may need to be restarted after changing inputs                      |
+| Dolphin     | ✅     | GameCube controls only. Wii layouts are user-specific                                |
+| RetroArch   | ⚠️     | Works, but player slot assignment is currently bugged                                |
+| DuckStation | ❌     | Requires root access to config files. Use SwanStation on RetroArch as an alternative |
+| AetherSX2   | ❌     | Requires root access to config files                                                 |
+| NetherSX2   | ❌     | Requires root access to config files                                                 |
+
+### Eden / Citron behavior
+
+> [!NOTE]
+> Eden and Citron may need to be fully restarted after EmuMapper writes a new controller configuration.
+
+Some launchers, including the default AYN launcher / Android Quickstep, may preload Eden or Citron in the background before you explicitly open them.
+
+When this happens:
+
+- the emulator process may already be running
+- the controller layout may already be loaded in memory
+- the next game launch may still use the previous controller configuration
+
+Fully restarting the emulator fixes the issue, because it reloads the config file on a fresh start.
+
+If you want an easier way to close and restart a game directly from your controller, you can check the [Key Mapper setup](./SETUP_KEY_MAPPER.md) guide.
+
+This behavior is caused by how the emulator loads its configuration, and cannot be fixed directly from EmuMapper. However, it may change in future emulator versions if their config loading behavior changes.
+
+ES-DE tends to avoid this issue, as long as you do not return to the Android home / Quickstep.
+
+### RetroArch
+
+> [!WARNING]
+> RetroArch player slot assignment is currently bugged.
+
+EmuMapper uses the priority option to match player order with controller connection order.
+
+However, this RetroArch feature is currently bugged. For now, EmuMapper does not apply any special workaround for RetroArch.
+
+---
+
 ## Mapping
 
 The Mapping section lets you customize the button layout for a specific controller.
