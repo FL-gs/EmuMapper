@@ -100,7 +100,7 @@ object ControllerDisplay {
             n.contains("nyxi warrior") -> R.drawable.controller_nyxi_warrior
             n.contains("dualsense") -> R.drawable.controller_dualsense
             n.contains("xbox") -> R.drawable.controller_xbox
-            else -> R.drawable.generic_controller
+            else -> R.drawable.controller_placeholder
         }
     }
 
@@ -128,7 +128,7 @@ object ControllerDisplay {
                 R.drawable.console_ayn_odin_3
 
             else ->
-                R.drawable.generic_handheld_console
+                R.drawable.console_placeholder
         }
     }
 
