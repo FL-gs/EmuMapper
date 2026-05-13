@@ -14,6 +14,12 @@
     <string name="onboarding_choose_next_hint">A : Sélectionner | START : Suivant</string>
 
 
+    <string name="update_available_title">Mise à jour disponible</string>
+    <string name="update_available_message">EmuMapper %1$s est disponible.\nVersion Actuelle %2$s.</string>
+    <string name="update_skip_this_version">Ignorer cette version</string>
+    <string name="update_cancel">Annuler</string>
+    <string name="update_ok">OK</string>
+
     <string name="settings_sidebar_title">Paramètres</string>
     <string name="settings_category_App">Paramètres de l’application</string>
     <string name="settings_category_language">Langue</string>

@@ -12,5 +12,6 @@ data class AppSettings(
     val onboardingDone: Boolean = false,
     val internalController: String? = null,
     val controllerMappingOverrides: Map<String, ControllerMapping> = emptyMap(),
-    val debugLogs: Boolean = false
+    val debugLogs: Boolean = false,
+    val ignoredUpdateVersion: String? = null
 )

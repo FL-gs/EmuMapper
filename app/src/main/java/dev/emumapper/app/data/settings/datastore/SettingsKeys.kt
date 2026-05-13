@@ -19,4 +19,5 @@ object SettingsKeys {
         stringPreferencesKey("controller_mapping_overrides_json")
 
     val DEBUG_LOGS = booleanPreferencesKey("debug_logs")
+    val IGNORED_UPDATE_VERSION = stringPreferencesKey("ignored_update_version")
 }

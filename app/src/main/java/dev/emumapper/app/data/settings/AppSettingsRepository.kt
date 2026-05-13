@@ -33,7 +33,8 @@ class AppSettingsRepository(
             controllerMappingOverrides = ControllerMappingOverridesCodec.decode(
                 prefs[SettingsKeys.CONTROLLER_MAPPING_OVERRIDES_JSON]
             ),
-            debugLogs = prefs[SettingsKeys.DEBUG_LOGS] ?: false
+            debugLogs = prefs[SettingsKeys.DEBUG_LOGS] ?: false,
+            ignoredUpdateVersion = prefs[SettingsKeys.IGNORED_UPDATE_VERSION]
         )
     }
 
@@ -136,6 +137,16 @@ class AppSettingsRepository(
         } else {
             prefs[SettingsKeys.CONTROLLER_MAPPING_OVERRIDES_JSON] =
                 ControllerMappingOverridesCodec.encode(overrides)
+        }
+    }
+
+    suspend fun setIgnoredUpdateVersion(versionName: String?) {
+        dataStore.edit { prefs ->
+            if (versionName == null) {
+                prefs.remove(SettingsKeys.IGNORED_UPDATE_VERSION)
+            } else {
+                prefs[SettingsKeys.IGNORED_UPDATE_VERSION] = versionName
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 package dev.emumapper.app
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,6 +26,7 @@ import dev.emumapper.app.core.pairing.AutoPairingService
 import dev.emumapper.app.core.settings.WriteMode
 import dev.emumapper.app.core.settings.localized
 import dev.emumapper.app.core.ui.theme.AppTheme
+import dev.emumapper.app.features.update.UpdateAvailableDialog
 
 @Composable
 fun App() {
@@ -33,11 +36,16 @@ fun App() {
     val pairingEngine = remember { appGraph.pairingEngine }
 
     val viewModel: AppViewModel = viewModel(
-        factory = AppViewModelFactory(appGraph.settingsRepository)
+        factory = AppViewModelFactory(
+            repo = appGraph.settingsRepository,
+            updateManager = appGraph.updateManager
+        )
     )
 
     val settings by viewModel.settings.collectAsState(initial = null)
     val visibleControllers by pairingEngine.visibleControllers.collectAsState()
+
+    val availableUpdate by viewModel.availableUpdate.collectAsState()
 
     if (settings == null) {
         Surface(
@@ -48,6 +56,14 @@ fun App() {
     }
 
     val s = settings!!
+
+    LaunchedEffect(s.onboardingDone) {
+        if (s.onboardingDone) {
+            viewModel.checkForUpdatesOnLaunch(
+                ignoredUpdateVersion = s.ignoredUpdateVersion
+            )
+        }
+    }
 
     val localizedContext = remember(context, s.language) {
         context.localized(s.language)
@@ -108,6 +124,27 @@ fun App() {
                     onClearLogs = viewModel::clearLogs,
                     onMarkOnboardingDone = viewModel::markOnboardingDone,
                 )
+
+                availableUpdate?.let { update ->
+                    UpdateAvailableDialog(
+                        update = update,
+                        currentVersionName = BuildConfig.VERSION_NAME,
+                        onOpenRelease = {
+                            viewModel.dismissUpdateDialog()
+
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(update.releaseUrl)
+                            )
+
+                            context.startActivity(intent)
+                        },
+                        onSkipVersion = {
+                            viewModel.ignoreUpdateVersion(update.versionName)
+                        },
+                        onDismiss = viewModel::dismissUpdateDialog
+                    )
+                }
             }
         }
     }

@@ -6,15 +6,40 @@ import dev.emumapper.app.core.input.mapping.EmuControl
 import dev.emumapper.app.core.input.mapping.InputBinding
 import dev.emumapper.app.core.settings.AppLanguage
 import dev.emumapper.app.core.settings.WriteMode
+import dev.emumapper.app.core.update.UpdateManager
 import dev.emumapper.app.core.utils.AppLogger
 import dev.emumapper.app.data.settings.AppSettingsRepository
 import kotlinx.coroutines.launch
 
 class AppViewModel(
-    private val repo: AppSettingsRepository
+    private val repo: AppSettingsRepository,
+    private val updateManager: UpdateManager
 ) : ViewModel() {
 
     val settings = repo.settings
+
+    val availableUpdate = updateManager.availableUpdate
+
+    fun checkForUpdatesOnLaunch(
+        ignoredUpdateVersion: String?
+    ) {
+        viewModelScope.launch {
+            updateManager.checkForUpdatesOnLaunch(
+                ignoredUpdateVersion = ignoredUpdateVersion
+            )
+        }
+    }
+
+    fun dismissUpdateDialog() {
+        updateManager.dismissUpdateDialog()
+    }
+
+    fun ignoreUpdateVersion(versionName: String) {
+        viewModelScope.launch {
+            repo.setIgnoredUpdateVersion(versionName)
+            updateManager.dismissUpdateDialog()
+        }
+    }
 
     fun setDarkTheme(value: Boolean) {
         viewModelScope.launch {
