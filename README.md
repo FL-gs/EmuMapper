@@ -9,7 +9,7 @@ EmuMapper is an Android app designed for Android handheld gaming devices such as
 It manages controller assignments for emulators, enabling a seamless handheld ↔ docked experience.
 The app is designed for controller-based navigation and does not support touchscreen input.
 
-[Download latest release](https://github.com/FL-gs/EmuMapper/releases/latest)
+[![Download latest release](https://img.shields.io/badge/Download-Latest%20release-2ea44f?style=for-the-badge)](https://github.com/FL-gs/EmuMapper/releases/latest)
 
 > [!IMPORTANT]
 > I run the app on my odin 2 porta & looking for feedback.
