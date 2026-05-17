@@ -12,13 +12,11 @@ The app is designed for controller-based navigation and does not support touchsc
 [Download latest release](https://github.com/FL-gs/EmuMapper/releases/latest)
 
 > [!IMPORTANT]
-> EmuMapper was originally made for personal use.
+> I run the app on my odin 2 porta & looking for feedback.
 >
-> I started learning Kotlin for this project, and I am still learning. I used LLMs to help with some features that were too challenging for me
+> If it works on your device, or if you encounter an issue, please contact me:
 > 
-> I am currently refactoring it to support more devices, controllers, and emulator setups.
-> 
-> You can contact me on Discord: **fl.gs**
+> Discord: **fl.gs**
 
 ## Table of Contents
 
