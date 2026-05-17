@@ -9,6 +9,10 @@
 
     <queries>
         <package android:name="dev.eden.eden_emulator" />
+        <package android:name="dev.eden.eden_emulator.nightly" />
+        <package android:name="dev.legacy.eden_emulator" />
+        <package android:name="dev.legacy.eden_emulator.nightly" />
+
         <package android:name="org.dolphinemu.dolphinemu" />
         <package android:name="com.retroarch" />
         <package android:name="com.retroarch.aarch64" />

@@ -18,7 +18,12 @@ object EmulatorCatalog {
         EmulatorDef(
             id = "eden",
             label = "Eden",
-            packageNames = listOf(EmulatorPackages.EDEN),
+            packageNames = listOf(
+                EmulatorPackages.EDEN,
+                EmulatorPackages.EDEN_NIGHTLY,
+                EmulatorPackages.EDEN_LEGACY,
+                EmulatorPackages.EDEN_LEGACY_NIGHTLY
+            ),
             iconRes = R.drawable.ic_emu_eden
         ),
         EmulatorDef(
